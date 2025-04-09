@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neon Football UI</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+  <div class="app">
+    <nav class="navbar">
+      <div class="logo">NeonFootball</div>
+      <ul id="nav-menu">
+        <li><a href="#home" data-key="home">Home</a></li>
+        <li><a href="#matches" data-key="matches">Partite</a></li>
+        <li><a href="#teams" data-key="teams">Squadre</a></li>
+        <li><a href="#stats" data-key="stats">Statistiche</a></li>
+      </ul>
+      <div class="language-switch">
+        <img src="assets/flags/it.png" alt="IT" id="lang-it">
+        <img src="assets/flags/en.png" alt="EN" id="lang-en">
+      </div>
+      <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </nav>
+
+    <header class="header" data-key="welcome">Benvenuto in Neon Football</header>
+
+    <section class="match-list">
+      <div class="match-card">
+        <div class="teams">Napoli vs Inter</div>
+        <div class="score">2 - 1</div>
+      </div>
+      <div class="match-card">
+        <div class="teams">Milan vs Roma</div>
+        <div class="score">1 - 1</div>
+      </div>
+    </section>
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

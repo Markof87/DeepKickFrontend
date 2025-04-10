@@ -55,33 +55,4 @@ document.addEventListener('DOMContentLoaded', () => {
     flag.style.transition = 'all 0.3s ease';
   });
 
-  const loader = document.getElementById('loader');
-  const overlay = document.createElement('div');
-  overlay.id = 'overlay';
-  overlay.style.position = 'fixed';
-  overlay.style.top = 0;
-  overlay.style.left = 0;
-  overlay.style.width = '100%';
-  overlay.style.height = '100%';
-  overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.50)';
-  overlay.style.zIndex = 9998;
-  overlay.style.pointerEvents = 'auto';
-  overlay.style.display = 'flex';
-  overlay.style.alignItems = 'center';
-  overlay.style.justifyContent = 'center';
-
-  document.body.appendChild(overlay);
-  overlay.appendChild(loader);
-
-  const observer = new MutationObserver(() => {
-    const matchCards = document.querySelectorAll('.match-card');
-    if (matchCards.length > 0) {
-      loader.classList.add('hidden');
-      overlay.remove();
-      observer.disconnect();
-    }
-  });
-
-  observer.observe(document.getElementById('match-container'), { childList: true });
-
 });

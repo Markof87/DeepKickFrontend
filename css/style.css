@@ -142,24 +142,18 @@ body {
 }
 
 .match-card.expanded .expanded-content {
-  max-height: 300px;
-  /* Adjust based on content size */
+  max-height: none;
   padding-top: 10px;
 }
 
 .team-formation {
-  display: flex;
+  display: inline-block;
   justify-content: space-between;
   padding: 5px 0;
 }
 
 .team-formation label {
   margin-left: 10px;
-}
-
-.radio-buttons {
-  display: flex;
-  align-items: center;
 }
 
 .teams,
@@ -179,34 +173,11 @@ body {
   color: #4da6ff;
 }
 
-
-.expanded-content {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.5s ease-out;
-  padding-top: 10px;
-}
-
-.match-card.expanded .expanded-content {
-  max-height: 300px;
-  /* Adjust based on content size */
-  padding-top: 10px;
-}
-
-.team-formation {
-  display: block;
-  /* Le formazioni sono disposte a capo */
-  padding: 5px 0;
-}
-
 .radio-buttons {
   display: flex;
   flex-direction: column;
-  /* Dispone i radio button in colonna */
   align-items: flex-start;
-  /* Allinea i radio button a sinistra */
   gap: 10px;
-  /* Distanza tra i radio button */
 }
 
 .radio-buttons label {
@@ -351,4 +322,45 @@ body {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.expanded-content {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-top: 1rem;
+}
+
+.team-formation {
+  flex: 1;
+}
+
+.stats-buttons-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stat-btn {
+  background: linear-gradient(145deg, #0ff, #00f);
+  border: 1px solid #0ff;
+  color: #0ff;
+  font-weight: bold;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  text-shadow: 0 0 5px #0ff, 0 0 10px #00f;
+  box-shadow: 0 0 5px #0ff, 0 0 15px #00f inset;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  font-family: 'Orbitron', 'Courier New', monospace;
+}
+
+.stat-btn:hover {
+  background: #000;
+  color: #fff;
+  border: 1px solid #fff;
+  box-shadow: 0 0 10px #fff, 0 0 20px #0ff, 0 0 30px #00f;
+  text-shadow: 0 0 10px #fff;
+  transform: scale(1.05);
 }

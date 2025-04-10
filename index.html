@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,12 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
 </head>
+
 <body>
+  <div id="loader">
+    <div class="ball-loader"></div>
+  </div>
+
   <div class="app">
     <nav class="navbar">
       <div class="logo"><img src="assets/DeepKickLogo.png" width="40%"></div>
@@ -31,38 +37,144 @@
     <header class="header" data-key="welcome">Benvenuto in DeepKick</header>
 
     <section class="match-list">
-      <div class="match-card">
-        <div class="teams">Napoli vs Inter</div>
-        <div class="score">2 - 1</div>
+      <div class="date-picker-container">
+        <input type="date" class="date-picker" id="date-picker" />
       </div>
-    <div id="match-container"></div>
-    <script>
-      fetch('http://localhost:5000/matchesbydate/20250409')
-        .then(response => response.json())
-        .then(data => {
-        const matchContainer = document.getElementById('match-container');
-        data.matches.forEach(match => {
-          const matchCard = document.createElement('div');
-          matchCard.className = 'match-card';
 
-          const teamsDiv = document.createElement('div');
-          teamsDiv.className = 'teams';
-          teamsDiv.textContent = `${match.team1} vs ${match.team2}`;
 
-          const scoreDiv = document.createElement('div');
-          scoreDiv.className = 'score';
-          scoreDiv.textContent = `${match.score1} - ${match.score2}`;
+      <div id="match-container"></div>
+      <script>
 
-          matchCard.appendChild(teamsDiv);
-          matchCard.appendChild(scoreDiv);
-          matchContainer.appendChild(matchCard);
-        });
-        })
-        .catch(error => console.error('Error fetching match data:', error));
-    </script>
+        fetch('http://localhost:5000/tournaments')
+          .then(response => response.json())
+          .then(data => {
+            tournaments = data.topTournaments;
+
+            return fetch('http://localhost:5000/matchesbydate/20250408');
+          })
+          .then(response => response.json())
+          .then(data => {
+            const matchContainer = document.getElementById('match-container');
+
+            const matchesData = [];
+            data.tournaments.forEach(tournament => {
+              if (tournaments.some(t => t.id === tournament.tournamentId)) {
+                tournament.matches.forEach(match => {
+                  matchesData.push({
+                    homeTeamName: match.homeTeamName,
+                    awayTeamName: match.awayTeamName,
+                    homeTeamId: match.homeTeamId,
+                    awayTeamId: match.awayTeamId,
+                    match_name: `${match.homeTeamName} - ${match.awayTeamName}`,
+                    score: match.homeScore !== null && match.awayScore !== null ? `${match.homeScore} - ${match.awayScore}` : "In corso",
+                    tournament_name: tournament.tournamentName,
+                    tournament_id: tournament.tournamentId,
+                    id: match.id
+                  });
+                });
+              }
+            });
+
+            matchesData.forEach(match => {
+              const matchCard = document.createElement('div');
+              matchCard.className = 'match-card';
+              matchCard.setAttribute('data-key', match.id);
+
+              const teamsDiv = document.createElement('div');
+              teamsDiv.className = 'teams';
+              teamsDiv.textContent = `${match.homeTeamName} vs ${match.awayTeamName}`;
+
+              const scoreDiv = document.createElement('div');
+              scoreDiv.className = 'score';
+              scoreDiv.textContent = `${match.score}`;
+
+              const expandedContent = document.createElement('div');
+              expandedContent.className = 'expanded-content';
+
+              const homeFormationDiv = document.createElement('div');
+              homeFormationDiv.className = 'team-formation';
+              homeFormationDiv.innerHTML = `
+                <span>${match.homeTeamName} Formation:</span>
+                <div class="radio-buttons">
+                  ${['Mario Rossi', 'Luigi Bianchi', 'Giovanni Verdi', 'Paolo Neri', 'Francesco Gialli'].map(player => `
+                  <label>
+                    <input type="radio" name="homePlayer" value="${player}"> ${player}
+                  </label>
+                  `).join('')}
+                </div>
+                `;
+              /*               homeFormationDiv.innerHTML = `
+                              <span>${match.homeTeamName} Formation:</span>
+                              <div class="radio-buttons">
+                                ${match.homeFormation.map(player => `
+                                  <label>
+                                    <input type="radio" name="homePlayer" value="${player}"> ${player}
+                                  </label>
+                                `).join('')}
+                              </div>
+                            `; */
+
+              const awayFormationDiv = document.createElement('div');
+              awayFormationDiv.className = 'team-formation';
+              /*               awayFormationDiv.innerHTML = `
+                              <span>${match.awayTeamName} Formation:</span>
+                              <div class="radio-buttons">
+                                ${match.awayFormation.map(player => `
+                                  <label>
+                                    <input type="radio" name="awayPlayer" value="${player}"> ${player}
+                                  </label>
+                                `).join('')}
+                              </div>
+                            `; */
+
+              expandedContent.appendChild(homeFormationDiv);
+              expandedContent.appendChild(awayFormationDiv);
+
+              matchCard.appendChild(teamsDiv);
+              matchCard.appendChild(scoreDiv);
+              matchCard.appendChild(expandedContent);
+              matchContainer.appendChild(matchCard);
+
+              matchCard.addEventListener('click', () => {
+                matchCard.classList.toggle('expanded');
+                fetch(`http://localhost:5000/match/${match.id}/formations`)
+                  .then(response => response.json())
+                  .then(data => {
+                    const homeFormationDiv = matchCard.querySelector('.team-formation:first-child');
+                    const awayFormationDiv = matchCard.querySelector('.team-formation:last-child');
+
+                    homeFormationDiv.innerHTML = `
+                    <span>${match.homeTeamName} Formation:</span>
+                    <div class="radio-buttons">
+                    ${data.homeFormation.map(player => `
+                      <label>
+                      <input type="radio" name="homePlayer" value="${player}"> ${player}
+                      </label>
+                    `).join('')}
+                    </div>
+                  `;
+
+                    awayFormationDiv.innerHTML = `
+                    <span>${match.awayTeamName} Formation:</span>
+                    <div class="radio-buttons">
+                    ${data.awayFormation.map(player => `
+                      <label>
+                      <input type="radio" name="awayPlayer" value="${player}"> ${player}
+                      </label>
+                    `).join('')}
+                    </div>
+                  `;
+                  })
+                  .catch(error => console.error('Error fetching formations:', error));
+              });
+            });
+          })
+          .catch(error => console.error('Error fetching data:', error));
+      </script>
     </section>
   </div>
 
   <script src="js/script.js"></script>
 </body>
+
 </html>

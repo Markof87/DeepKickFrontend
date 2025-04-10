@@ -1,49 +1,50 @@
 /* Stile base */
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #1e1e2f;
-    color: #e3e3e3;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #1e1e2f;
+  color: #e3e3e3;
 }
 
 header {
-    text-align: center;
-    padding: 20px;
-    background-color: #00b3cc;
-    color: #1e1e2f;
+  text-align: center;
+  padding: 20px;
+  background-color: #00b3cc;
+  color: #1e1e2f;
 }
 
 main {
-    padding: 20px;
+  padding: 20px;
 }
 
-h1, h2 {
-    color: #00d4ff;
-    text-shadow: 0px 0px 8px #00b3cc;
+h1,
+h2 {
+  color: #00d4ff;
+  text-shadow: 0px 0px 8px #00b3cc;
 }
 
 #chart {
-    text-align: center;
-    margin-top: 20px;
+  text-align: center;
+  margin-top: 20px;
 }
 
 svg {
-    background-color: #2a2a3b;
-    border: 2px solid #00b3cc;
-    border-radius: 8px;
+  background-color: #2a2a3b;
+  border: 2px solid #00b3cc;
+  border-radius: 8px;
 }
 
 .tooltip {
-    position: absolute;
-    background-color: #2a2a3b;
-    color: #e3e3e3;
-    padding: 8px;
-    border-radius: 4px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.2s ease-in-out;
+  position: absolute;
+  background-color: #2a2a3b;
+  color: #e3e3e3;
+  padding: 8px;
+  border-radius: 4px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap');
@@ -78,6 +79,39 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  margin-left: 50px;
+}
+
+.date-picker-container {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 20px;
+}
+
+.date-picker {
+  background-color: #222;
+  color: #aee4ff;
+  border: 2px solid #0077ff;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.date-picker:focus {
+  border-color: #ff00ff;
+  box-shadow: 0 0 10px #ff00ff;
+}
+
+.date-picker::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+#match-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .match-card {
@@ -86,7 +120,6 @@ body {
   border: 1px solid #0077ff;
   border-radius: 10px;
   box-shadow: 0 0 5px #0077ff44;
-  display: flex;
   justify-content: space-between;
   align-items: center;
   transition: transform 0.3s, box-shadow 0.3s;
@@ -95,6 +128,44 @@ body {
 .match-card:hover {
   transform: scale(1.01);
   box-shadow: 0 0 15px #0077ff88;
+}
+
+.match-card.expanded {
+  background-color: #444;
+}
+
+.expanded-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease-out;
+  padding-top: 10px;
+}
+
+.match-card.expanded .expanded-content {
+  max-height: 300px;
+  /* Adjust based on content size */
+  padding-top: 10px;
+}
+
+.team-formation {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+}
+
+.team-formation label {
+  margin-left: 10px;
+}
+
+.radio-buttons {
+  display: flex;
+  align-items: center;
+}
+
+.teams,
+.score {
+  display: inline-block;
+  margin-right: 20px;
 }
 
 .teams {
@@ -106,6 +177,41 @@ body {
 .score {
   font-size: 1.3rem;
   color: #4da6ff;
+}
+
+
+.expanded-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease-out;
+  padding-top: 10px;
+}
+
+.match-card.expanded .expanded-content {
+  max-height: 300px;
+  /* Adjust based on content size */
+  padding-top: 10px;
+}
+
+.team-formation {
+  display: block;
+  /* Le formazioni sono disposte a capo */
+  padding: 5px 0;
+}
+
+.radio-buttons {
+  display: flex;
+  flex-direction: column;
+  /* Dispone i radio button in colonna */
+  align-items: flex-start;
+  /* Allinea i radio button a sinistra */
+  gap: 10px;
+  /* Distanza tra i radio button */
+}
+
+.radio-buttons label {
+  display: inline-block;
+  /* Assicura che i radio button siano in colonna */
 }
 
 /* NavBar */
@@ -210,5 +316,39 @@ body {
 
   .teams {
     margin-bottom: 0.5rem;
+  }
+}
+
+#loader {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: opacity 0.5s ease;
+}
+
+#loader.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ball-loader {
+  width: 160px;
+  height: 160px;
+  background-image: url('../assets/ball_loader.png');
+  background-size: cover;
+  animation: spin 2s infinite linear;
+
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
   }
 }

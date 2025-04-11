@@ -30,14 +30,14 @@ function createMatchCard(match) {
 
     const homeStatsButtons = document.createElement('div');
     homeStatsButtons.className = 'stats-buttons-column';
-    homeStatsButtons.innerHTML = createStatsButtonsHTML('home', match.id);
+    homeStatsButtons.innerHTML = createStatsButtonsHTML('home', match.id, match.homeTeamId, match.homeTeamName, match.awayTeamName);
 
     const awayFormationDiv = document.createElement('div');
     awayFormationDiv.className = 'team-formation';
 
     const awayStatsButtons = document.createElement('div');
     awayStatsButtons.className = 'stats-buttons-column';
-    awayStatsButtons.innerHTML = createStatsButtonsHTML('away', match.id);
+    awayStatsButtons.innerHTML = createStatsButtonsHTML('away', match.id, match.awayTeamId, match.awayTeamName, match.homeTeamName);
 
     expandedContent.appendChild(homeFormationDiv);
     expandedContent.appendChild(homeStatsButtons);
@@ -68,8 +68,8 @@ function loadFormations(matchId, homeDiv, awayDiv, homeName, awayName) {
         fetch(`${API_BASE_URL}/match/${matchId}/team/home`).then(res => res.json()),
         fetch(`${API_BASE_URL}/match/${matchId}/team/away`).then(res => res.json())
     ])
-    .then(([homeData, awayData]) => {
-        homeDiv.innerHTML = `
+        .then(([homeData, awayData]) => {
+            homeDiv.innerHTML = `
             <span>${homeName} Formation:</span>
             <div class="radio-buttons">
                 ${homeData.filter(p => p.stats && Object.keys(p.stats).length > 0).map(p => `
@@ -80,7 +80,7 @@ function loadFormations(matchId, homeDiv, awayDiv, homeName, awayName) {
             </div>
         `;
 
-        awayDiv.innerHTML = `
+            awayDiv.innerHTML = `
             <span>${awayName} Formation:</span>
             <div class="radio-buttons">
                 ${awayData.filter(p => p.stats && Object.keys(p.stats).length > 0).map(p => `
@@ -91,12 +91,12 @@ function loadFormations(matchId, homeDiv, awayDiv, homeName, awayName) {
             </div>
         `;
 
-        loaderOff();
-    })
-    .catch(error => {
-        console.error('Errore nel caricamento formazioni:', error);
-        loaderOff();
-    });
+            loaderOff();
+        })
+        .catch(error => {
+            console.error('Errore nel caricamento formazioni:', error);
+            loaderOff();
+        });
 }
 
 // Funzione principale
@@ -137,9 +137,11 @@ export function loadMatchesByDate(date) {
     document.addEventListener('click', (e) => {
         if (e.target.matches('.stat-btn')) {
             const stat = e.target.getAttribute('data-stat');
-            const side = e.target.getAttribute('data-side');
             const matchId = e.target.getAttribute('data-match');
-            generateStatReport(stat, side, matchId);
+            const matchTeamId = e.target.getAttribute('data-match-team');
+            const matchTeamName = e.target.getAttribute('data-match-team-name');
+            const matchTeamOpponentName = e.target.getAttribute('data-match-team-opponent');
+            generateStatReport(stat, matchId, matchTeamId, matchTeamName, matchTeamOpponentName);
         }
     });
 }

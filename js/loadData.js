@@ -48,11 +48,12 @@ function createMatchCard(match) {
     matchCard.appendChild(scoreDiv);
     matchCard.appendChild(expandedContent);
 
-    matchCard.addEventListener('click', () => {
-        matchCard.classList.toggle('expanded');
-
-        if (matchCard.classList.contains('expanded')) {
-            loadFormations(match.id, homeFormationDiv, awayFormationDiv, match.homeTeamName, match.awayTeamName);
+    matchCard.addEventListener('click', (event) => {
+        if (event.target === matchCard || event.target.classList.contains('teams') || event.target.classList.contains('score')) {
+            matchCard.classList.toggle('expanded');
+            if (matchCard.classList.contains('expanded')) {
+                loadFormations(match.id, homeFormationDiv, awayFormationDiv, match.homeTeamName, match.awayTeamName);
+            }
         }
     });
 

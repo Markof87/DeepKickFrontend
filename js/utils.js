@@ -68,7 +68,7 @@ export function createStatsButtonsHTML(side, matchId, matchTeamId, matchTeamName
   const classButtonName = isEnabled ? 'stat-btn' : 'stat-btn freezed';
   const idButton = isEnabled ? `${matchId}_${matchTeamId}` : `${matchId}_${matchTeamId}_player`;
   return stats.map(stat => `
-      <button class="${classButtonName}" id="${idButton}" data-stat="${stat.toLowerCase()}" data-side="${side}" data-match="${matchId}" 
+      <button class="${classButtonName}" id="${idButton}_${stat}" data-stat="${stat.toLowerCase()}" data-side="${side}" data-match="${matchId}" 
       data-match-team="${matchTeamId}" data-match-team-name="${matchTeamName}" data-match-team-opponent="${matchTeamOpponentName}">
           ${stat}
       </button>
@@ -92,7 +92,6 @@ export function enableStatButtonFromRadio(event) {
     const labelElement = radio.closest('label');
     const labelText = labelElement ? labelElement.textContent.trim() : '';
     button.setAttribute('data-player-name', labelText);
-    button.removeEventListener('click', generateStatReport);
     button.addEventListener('click', (e) => {
         const stat = e.target.getAttribute('data-stat');
         const matchId = e.target.getAttribute('data-match');

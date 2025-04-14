@@ -124,8 +124,8 @@ function loadFormations(matchId, homeDiv, awayDiv, homeName, awayName) {
         });
 }
 
-// Funzione principale
 export function loadMatchesByDate(date) {
+    console.log("Loading matches for date:", date);
     const matchContainer = document.getElementById('match-container');
     if (matchContainer) {
         matchContainer.innerHTML = '';
@@ -160,7 +160,8 @@ export function loadMatchesByDate(date) {
         .catch(error => console.error('Error fetching data:', error));
 
     document.addEventListener('click', (e) => {
-        if (e.target.matches('.stat-btn')) {
+        const statButton = e.target.closest('.stat-btn');
+        if (statButton && statButton.closest('.stats-buttons-row')) {            
             const stat = e.target.getAttribute('data-stat');
             const matchId = e.target.getAttribute('data-match');
             const matchTeamId = e.target.getAttribute('data-match-team');

@@ -1,3 +1,5 @@
+import { generateStatReport } from "./reports.js";
+
 export function footballLoader() {
   const loader = document.getElementById('loader');
   let overlay = document.getElementById('overlay');
@@ -61,12 +63,45 @@ export function loaderOff() {
   overlay.style.display = 'none';
 }
 
-export function createStatsButtonsHTML(side, matchId, matchTeamId, matchTeamName, matchTeamOpponentName) {
+export function createStatsButtonsHTML(side, matchId, matchTeamId, matchTeamName, matchTeamOpponentName, isEnabled) {
   const stats = ['Pass', 'Shot', 'Tackle', 'Dribbling', 'Intercetti'];
+  const classButtonName = isEnabled ? 'stat-btn' : 'stat-btn freezed';
+  const idButton = isEnabled ? `${matchId}_${matchTeamId}` : `${matchId}_${matchTeamId}_player`;
   return stats.map(stat => `
-      <button class="stat-btn" data-stat="${stat.toLowerCase()}" data-side="${side}" data-match="${matchId}" 
+      <button class="${classButtonName}" id="${idButton}" data-stat="${stat.toLowerCase()}" data-side="${side}" data-match="${matchId}" 
       data-match-team="${matchTeamId}" data-match-team-name="${matchTeamName}" data-match-team-opponent="${matchTeamOpponentName}">
           ${stat}
       </button>
   `).join('');
+}
+
+export function enableStatButtonFromRadio(event) {
+  const radio = event.target;
+  
+  const groupName = radio.name; 
+  const matchId = groupName.split('-')[1];
+
+  const side = groupName.startsWith('home') ? 'home' : 'away';
+
+  const statButtons = document.querySelectorAll(`.stats-buttons-column .stat-btn[data-match="${matchId}"][data-side="${side}"]`);
+  statButtons.forEach(button => {
+    button.disabled = false;
+    button.classList.remove('freezed');
+    button.setAttribute('data-player', radio.value);
+
+    const labelElement = radio.closest('label');
+    const labelText = labelElement ? labelElement.textContent.trim() : '';
+    button.setAttribute('data-player-name', labelText);
+    button.removeEventListener('click', generateStatReport);
+    button.addEventListener('click', (e) => {
+        const stat = e.target.getAttribute('data-stat');
+        const matchId = e.target.getAttribute('data-match');
+        const matchTeamId = e.target.getAttribute('data-match-team');
+        const matchTeamName = e.target.getAttribute('data-match-team-name');
+        const matchTeamOpponentName = e.target.getAttribute('data-match-team-opponent');
+        const matchPlayerId = e.target.getAttribute('data-player');
+        const matchPlayerName = e.target.getAttribute('data-player-name');
+        generateStatReport(stat, matchId, matchTeamId, matchTeamName, matchTeamOpponentName, matchPlayerId, matchPlayerName);
+    });
+  });
 }

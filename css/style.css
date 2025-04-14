@@ -120,9 +120,16 @@ body {
   border: 1px solid #0077ff;
   border-radius: 10px;
   box-shadow: 0 0 5px #0077ff44;
+  margin-bottom: 1rem;
+  transition: transform 0.3s, box-shadow 0.3s;
   justify-content: space-between;
   align-items: center;
-  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.match-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .match-card:hover {
@@ -147,6 +154,12 @@ body {
 .match-card.expanded .expanded-content {
   max-height: none;
   padding-top: 10px;
+}
+
+.score-and-buttons {
+  display: inline-block;
+  align-items: center;
+  gap: 1rem;
 }
 
 .team-formation {
@@ -174,6 +187,12 @@ body {
 .score {
   font-size: 1.3rem;
   color: #4da6ff;
+}
+
+.stats-buttons-row {
+  display: inline-block;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .radio-buttons {
@@ -332,9 +351,14 @@ body {
 }
 
 .stats-buttons-column {
-  display: flex;
+  display: none;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+.stat-btn:disabled, .stat-btn.freezed {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .stat-btn {
@@ -352,7 +376,7 @@ body {
   font-family: 'Orbitron', 'Courier New', monospace;
 }
 
-.stat-btn:hover {
+.stat-btn:hover:enabled {
   background: #000;
   color: #fff;
   border: 1px solid #fff;

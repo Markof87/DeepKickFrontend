@@ -1,5 +1,5 @@
 import { API_BASE_URL } from './config.js';
-import { footballLoader, loaderOff, loaderOn, createStatsButtonsHTML } from './utils.js';
+import { footballLoader, loaderOff, loaderOn, createStatsButtonsHTML, enableStatButtonFromRadio } from './utils.js';
 import { generateStatReport } from './reports.js';
 
 // Crea la match card HTML
@@ -7,10 +7,16 @@ function createMatchCard(match) {
     const matchCard = document.createElement('div');
     matchCard.className = 'match-card';
     matchCard.setAttribute('data-key', match.id);
+    
+    const matchHeader = document.createElement('div');
+    matchHeader.className = 'match-header';
 
     const teamsDiv = document.createElement('div');
     teamsDiv.className = 'teams';
     teamsDiv.textContent = `${match.homeTeamName} - ${match.awayTeamName}`;
+
+    const scoreButtonsDiv = document.createElement('div');
+    scoreButtonsDiv.className = 'score-and-buttons';
 
     const scoreDiv = document.createElement('div');
     scoreDiv.className = 'score';
@@ -22,34 +28,47 @@ function createMatchCard(match) {
                 ? `${match.homeScore} - ${match.awayScore}`
                 : "N/A";
 
+    const homeStatsButtons = document.createElement('div');
+    homeStatsButtons.className = 'stats-buttons-row';
+    homeStatsButtons.innerHTML = createStatsButtonsHTML('home', match.id, match.homeTeamId, match.homeTeamName, match.awayTeamName, true);
+
+    const awayStatsButtons = document.createElement('div');
+    awayStatsButtons.className = 'stats-buttons-row';
+    awayStatsButtons.innerHTML = createStatsButtonsHTML('away', match.id, match.awayTeamId, match.awayTeamName, match.homeTeamName, true);
+
+    scoreButtonsDiv.appendChild(scoreDiv);
+    scoreButtonsDiv.appendChild(homeStatsButtons);
+    scoreButtonsDiv.appendChild(awayStatsButtons);
+
     const expandedContent = document.createElement('div');
     expandedContent.className = 'expanded-content';
 
     const homeFormationDiv = document.createElement('div');
     homeFormationDiv.className = 'team-formation';
 
-    const homeStatsButtons = document.createElement('div');
-    homeStatsButtons.className = 'stats-buttons-column';
-    homeStatsButtons.innerHTML = createStatsButtonsHTML('home', match.id, match.homeTeamId, match.homeTeamName, match.awayTeamName);
+    const homeStatsButtonsPlayer = document.createElement('div');
+    homeStatsButtonsPlayer.className = 'stats-buttons-column';
+    homeStatsButtonsPlayer.innerHTML = createStatsButtonsHTML('home', match.id, match.homeTeamId, match.homeTeamName, match.awayTeamName, false);
 
     const awayFormationDiv = document.createElement('div');
     awayFormationDiv.className = 'team-formation';
 
-    const awayStatsButtons = document.createElement('div');
-    awayStatsButtons.className = 'stats-buttons-column';
-    awayStatsButtons.innerHTML = createStatsButtonsHTML('away', match.id, match.awayTeamId, match.awayTeamName, match.homeTeamName);
+    const awayStatsButtonsPlayer = document.createElement('div');
+    awayStatsButtonsPlayer.className = 'stats-buttons-column';
+    awayStatsButtonsPlayer.innerHTML = createStatsButtonsHTML('away', match.id, match.awayTeamId, match.awayTeamName, match.homeTeamName, false);
 
     expandedContent.appendChild(homeFormationDiv);
-    expandedContent.appendChild(homeStatsButtons);
+    expandedContent.appendChild(homeStatsButtonsPlayer);
     expandedContent.appendChild(awayFormationDiv);
-    expandedContent.appendChild(awayStatsButtons);
+    expandedContent.appendChild(awayStatsButtonsPlayer);
 
     matchCard.appendChild(teamsDiv);
-    matchCard.appendChild(scoreDiv);
+    matchCard.appendChild(scoreButtonsDiv);
     matchCard.appendChild(expandedContent);
+    matchCard.appendChild(matchHeader);
 
     matchCard.addEventListener('click', (event) => {
-        if (event.target === matchCard || event.target.classList.contains('teams') || event.target.classList.contains('score')) {
+        if (event.target === matchCard || event.target.classList.contains('teams') || event.target.classList.contains('score-and-buttons')) {
             matchCard.classList.toggle('expanded');
             if (matchCard.classList.contains('expanded')) {
                 loadFormations(match.id, homeFormationDiv, awayFormationDiv, match.homeTeamName, match.awayTeamName);
@@ -92,6 +111,12 @@ function loadFormations(matchId, homeDiv, awayDiv, homeName, awayName) {
         `;
 
             loaderOff();
+            document.querySelectorAll('.radio-buttons input[type="radio"]').forEach(input => {
+                input.addEventListener('change', enableStatButtonFromRadio);
+            });            
+            document.querySelectorAll('.stats-buttons-column').forEach(el => {
+                el.style.display = 'flex';
+            });
         })
         .catch(error => {
             console.error('Errore nel caricamento formazioni:', error);
@@ -141,7 +166,7 @@ export function loadMatchesByDate(date) {
             const matchTeamId = e.target.getAttribute('data-match-team');
             const matchTeamName = e.target.getAttribute('data-match-team-name');
             const matchTeamOpponentName = e.target.getAttribute('data-match-team-opponent');
-            generateStatReport(stat, matchId, matchTeamId, matchTeamName, matchTeamOpponentName);
+            generateStatReport(stat, matchId, matchTeamId, matchTeamName, matchTeamOpponentName, 0, "");
         }
     });
 }

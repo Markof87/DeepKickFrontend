@@ -1,12 +1,23 @@
 import { API_BASE_URL } from './config.js';
 import { loaderOff, loaderOn } from './utils.js';
 
-export function generateStatReport(stat, matchId, matchTeamId, matchTeamName, matchTeamOpponentName) {
+export function generateStatReport(stat, matchId, matchTeamId, matchTeamName, matchTeamOpponentName, matchPlayerId, matchPlayerName) {
 
     const event_name = stat.charAt(0).toUpperCase() + stat.slice(1).toLowerCase();
-    const url = API_BASE_URL + `/match/${matchId}/team/${matchTeamId}/event/${event_name}`;
-    const name = matchTeamName;
+    var url = "";
+    var name = "";
+
+    if(matchPlayerId == 0) {
+        url = API_BASE_URL + `/match/${matchId}/team/${matchTeamId}/event/${event_name}`;
+        name = matchTeamName;
+    }
+    else{
+        url = API_BASE_URL + `/match/${matchId}/player/${matchPlayerId}/event/${event_name}`;
+        name = matchPlayerName;
+    }
+
     const opponent = matchTeamOpponentName;
+    console.log(name, opponent, event_name, url);
 
     loaderOn();
 

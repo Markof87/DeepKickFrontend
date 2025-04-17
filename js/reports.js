@@ -28,20 +28,22 @@ export function generateStatReport(stat, matchId, matchTeamId, matchTeamName, ma
         },
         body: JSON.stringify({ url, event_name, name, opponent })
     })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            loaderOff();
-            return response.json();
-        })
-        .then(data => {
-            loaderOff();
-            console.log('Report generated successfully:', data);
-        })
-        .catch(error => {
-            loaderOff();
-            console.error('Error generating report:', error);
-        });
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        loaderOff();
+        return response.json();
+    })
+    .then(data => {
+        loaderOff();
+        const image_id = data.data.image_id
+        window.open(API_BASE_URL + "/temp_image/"+ image_id, "_blank");
+        console.log('Report generated successfully:', data);
+    })
+    .catch(error => {
+        loaderOff();
+        console.error('Error generating report:', error);
+    });
 
 }

@@ -128,8 +128,10 @@ body {
 
 .match-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .match-card:hover {
@@ -163,13 +165,29 @@ body {
 }
 
 .team-formation {
-  display: inline-block;
-  justify-content: space-between;
-  padding: 5px 0;
+  background: rgba(30, 40, 60, 0.98);
+  border-radius: 16px;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 4px 24px #00b3cc33;
+  margin-bottom: 2rem;
+  min-width: 260px;
 }
 
-.team-formation label {
-  margin-left: 10px;
+/* Lista giocatori più ariosa */
+.team-formation label,
+.team-formation li {
+  font-size: 1.1rem;
+  line-height: 2.1;
+  padding-left: 0.5rem;
+}
+
+.team-formation label:hover,
+.team-formation li:hover {
+  background: #00334d44;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #ffde59;
+  transition: background 0.2s, color 0.2s;
 }
 
 .teams,
@@ -179,14 +197,18 @@ body {
 }
 
 .teams {
-  font-weight: 600;
-  font-size: 1.2rem;
-  color: #aee4ff;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #00eaff;
+  letter-spacing: 1px;
 }
 
 .score {
-  font-size: 1.3rem;
-  color: #4da6ff;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #ffde59;
+  margin: 0 1rem;
+  text-shadow: 0 0 8px #222, 0 0 18px #00eaff;
 }
 
 .stats-buttons-row {
@@ -240,6 +262,14 @@ body {
   transition: color 0.3s;
 }
 
+.navbar li a.active,
+.navbar li a:focus {
+  color: #ffde59;
+  border-bottom: 3px solid #ffde59;
+  background: rgba(0, 224, 255, 0.08);
+  border-radius: 4px 4px 0 0;
+}
+
 .navbar li a:hover {
   color: #ffffff;
 }
@@ -273,6 +303,25 @@ body {
   background: #66b2ff;
   margin: 4px 0;
   transition: 0.4s;
+}
+
+@media (max-width: 900px) {
+  .match-header {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .team-formation {
+    min-width: unset;
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .stat-btn {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 0.8rem;
+  }
 }
 
 @media (max-width: 768px) {
@@ -356,31 +405,54 @@ body {
   gap: 0.5rem;
 }
 
-.stat-btn:disabled, .stat-btn.freezed {
+.stat-btn:disabled,
+.stat-btn.freezed {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
 .stat-btn {
   background: linear-gradient(145deg, #0ff, #00f);
-  border: 1px solid #0ff;
-  color: #0ff;
+  border: 2px solid #0ff;
+  color: #fff;
   font-weight: bold;
-  padding: 6px 10px;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  text-shadow: 0 0 5px #0ff, 0 0 10px #00f;
-  box-shadow: 0 0 5px #0ff, 0 0 15px #00f inset;
-  transition: all 0.2s ease-in-out;
-  cursor: pointer;
-  font-family: 'Orbitron', 'Courier New', monospace;
+  padding: 8px 18px;
+  border-radius: 10px;
+  font-size: 1rem;
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  transition: all 0.2s;
+  box-shadow: 0 0 8px #00f2, 0 0 18px #0ff4 inset;
+}
+
+.stat-btn i {
+  font-size: 1.1em;
 }
 
 .stat-btn:hover:enabled {
-  background: #000;
+  background: #002244;
   color: #fff;
-  border: 1px solid #fff;
-  box-shadow: 0 0 10px #fff, 0 0 20px #0ff, 0 0 30px #00f;
-  text-shadow: 0 0 10px #fff;
-  transform: scale(1.05);
+  border: 2px solid #fff;
+  box-shadow: 0 0 16px #fff, 0 0 20px #0ff, 0 0 30px #00f;
+  transform: scale(1.07);
+}
+
+select,
+.dropdown {
+  background: #181f2e;
+  color: #00eaff;
+  border: 2px solid #00eaff;
+  border-radius: 8px;
+  padding: 0.7em 1.2em;
+  font-size: 1.1rem;
+  margin-top: 1.2rem;
+  box-shadow: 0 0 8px #00eaff44;
+}
+
+select:focus {
+  border-color: #ffde59;
+  outline: none;
 }

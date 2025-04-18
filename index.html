@@ -9,6 +9,65 @@
   <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
 </head>
 
+<style>
+  .dropdown-container {
+    background: #0c1627;
+    border: 2px solid #00f2ff;
+    box-shadow: 0 0 20px #00f2ff55;
+    border-radius: 12px;
+    padding: 16px;
+    width: 300px;
+    position: relative;
+  }
+
+  .dropdown-trigger {
+    background: #102040;
+    border: 1px solid #00f2ff;
+    padding: 10px 16px;
+    border-radius: 8px;
+    color: #00f2ff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background 0.3s;
+  }
+
+  .dropdown-trigger:hover {
+    background: #183050;
+  }
+
+  .dropdown-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out;
+    margin-top: 10px;
+  }
+
+  .dropdown-menu.open {
+    max-height: 500px;
+    transition: max-height 0.5s ease-in;
+  }
+
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #183050;
+  }
+
+  .dropdown-item:hover {
+    background-color: #143045;
+  }
+
+  .dropdown-item i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+  }
+</style>
+
 <body>
   <div id="loader">
     <div class="ball-loader"></div>
@@ -36,6 +95,35 @@
 
     <header class="header" data-key="welcome">Benvenuto in DeepKick</header>
 
+    <div class="dropdown-container">
+      <div class="dropdown-trigger" onclick="toggleDropdown()">
+        <span id="selected-label"><i>⇄</i> Passaggi</span>
+        <span>▼</span>
+      </div>
+      <div class="dropdown-menu" id="dropdown-menu">
+        <div class="dropdown-item" onclick="selectReport(this, '⇄', 'Passaggi')"><i>⇄</i> Passaggi</div>
+        <div class="dropdown-item" onclick="selectReport(this, '🎯', 'Tiri')"><i>🎯</i> Tiri</div>
+        <div class="dropdown-item" onclick="selectReport(this, '⚡', 'Contrasti')"><i>⚡</i> Contrasti</div>
+        <div class="dropdown-item" onclick="selectReport(this, '🔥', 'xG nel tempo')"><i>🔥</i> xG nel tempo</div>
+        <div class="dropdown-item" onclick="selectReport(this, '💥', 'xT nel tempo')"><i>💥</i> xT nel tempo</div>
+        <div class="dropdown-item" onclick="selectReport(this, '🗺️', 'Heatmap')"><i>🗺️</i> Heatmap</div>
+        <div class="dropdown-item" onclick="selectReport(this, '📊', 'Network Pass')"><i>📊</i> Network Pass</div>
+        <div class="dropdown-item" onclick="selectReport(this, '📈', 'Rendimento')"><i>📈</i> Rendimento</div>
+      </div>
+    </div>
+
+    <script>
+      function toggleDropdown() {
+        const menu = document.getElementById('dropdown-menu');
+        menu.classList.toggle('open');
+      }
+
+      function selectReport(element, icon, label) {
+        document.getElementById('selected-label').innerHTML = `<i>${icon}</i> ${label}`;
+        toggleDropdown();
+      }
+    </script>
+
     <section class="match-list">
       <div class="date-picker-container">
         <input type="date" class="date-picker" id="date-picker" />
@@ -58,7 +146,7 @@
           const selectedDate = this.value.replace(/-/g, '');
           loadMatchesByDate(selectedDate);
         });
-        
+
       </script>
     </section>
   </div>

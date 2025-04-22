@@ -440,6 +440,50 @@ body {
   transform: scale(1.07);
 }
 
+.tournament-wrapper {
+  margin-bottom: 2rem;
+}
+
+.tournament-card {
+  background: linear-gradient(145deg, #101830, #122442);
+  border: 1px solid #0077ff;
+  border-radius: 15px;
+  box-shadow: 0 0 25px rgba(0, 119, 255, 0.15);
+  overflow: hidden;
+  transition: all 0.4s ease;
+}
+
+.tournament-header {
+  padding: 1.2rem 1.5rem;
+  background: linear-gradient(90deg, #071428, #0c2955);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  border-bottom: 2px solid rgba(0, 234, 255, 0.3);
+}
+
+.tournament-name {
+  font-size: 1.5rem;
+  color: #00eaff;
+  text-shadow: 0 0 10px rgba(0, 234, 255, 0.5);
+  margin: 0;
+}
+
+.tournament-content {
+  padding: 1rem;
+}
+
+/* Rendere le match-card interne leggermente diverse */
+.tournament-content .match-card {
+  background-color: rgba(17, 27, 37, 0.7);
+  margin-bottom: 0.8rem;
+}
+
+.tournament-content .match-card:last-child {
+  margin-bottom: 0;
+}
+
 select,
 .dropdown {
   background: #181f2e;
@@ -455,4 +499,101 @@ select,
 select:focus {
   border-color: #ffde59;
   outline: none;
+}
+
+.match-context {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.stats-dropdown-container {
+  display: inline-block;
+  margin: 0.5rem 1rem;
+  vertical-align: top;
+  position: relative;
+  width: 180px;
+}
+
+.match-dropdown {
+  background: linear-gradient(145deg, #0077ff, #00eaff);
+  font-size: 0.95rem;
+  border: 1px solid #00f2ff;
+}
+
+.match-dropdown-menu {
+  position: absolute;
+  z-index: 10;
+  width: 100%;
+}
+
+/* Per assicurare che i dropdown rimangano visibili quando la card si espande */
+.match-card.expanded .stats-dropdown-container {
+  position: relative;
+  z-index: 5;
+}
+
+/* Stilizzazione per i dropdown nelle formazioni espanse */
+.team-formation .stats-dropdown-container {
+  width: 100%;
+  margin: 0.5rem 0;
+}
+
+.dropdown-container {
+  background: #0c1627;
+  border: 2px solid #00f2ff;
+  box-shadow: 0 0 20px #00f2ff55;
+  border-radius: 12px;
+  padding: 16px;
+  width: 300px;
+  position: relative;
+  display: inline-grid;
+}
+
+.dropdown-trigger {
+  background: #102040;
+  border: 1px solid #00f2ff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  color: #00f2ff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background 0.3s;
+}
+
+.dropdown-trigger:hover {
+  background: #183050;
+}
+
+.dropdown-menu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease-out;
+  margin-top: 10px;
+}
+
+.dropdown-menu.open {
+  max-height: 500px;
+  transition: max-height 0.5s ease-in;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #183050;
+}
+
+.dropdown-item:hover {
+  background-color: #143045;
+}
+
+.dropdown-item i {
+  margin-right: 10px;
+  width: 20px;
+  text-align: center;
 }

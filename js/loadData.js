@@ -28,17 +28,83 @@ function createMatchCard(match) {
                 ? `${match.homeScore} - ${match.awayScore}`
                 : "N/A";
 
-    const homeStatsButtons = document.createElement('div');
-    homeStatsButtons.className = 'stats-buttons-row';
-    homeStatsButtons.innerHTML = createStatsButtonsHTML('home', match.id, match.homeTeamId, match.homeTeamName, match.awayTeamName, true);
-
-    const awayStatsButtons = document.createElement('div');
-    awayStatsButtons.className = 'stats-buttons-row';
-    awayStatsButtons.innerHTML = createStatsButtonsHTML('away', match.id, match.awayTeamId, match.awayTeamName, match.homeTeamName, true);
-
     scoreButtonsDiv.appendChild(scoreDiv);
-    scoreButtonsDiv.appendChild(homeStatsButtons);
-    scoreButtonsDiv.appendChild(awayStatsButtons);
+
+    const topRow = document.createElement('div');
+    topRow.className = 'top-row';
+    topRow.appendChild(teamsDiv);
+    topRow.appendChild(scoreButtonsDiv);
+
+    const homeStatsDropdown = document.createElement('div');
+    homeStatsDropdown.className = 'dropdown-container';
+    homeStatsDropdown.innerHTML = `
+        <div class="dropdown-trigger" onclick="toggleDropdown()">
+            <span id="selected-label"><i>⇄</i> Passaggi</span>
+            <span>▼</span>
+        </div>
+        <div class="dropdown-menu" id="dropdown-menu">
+            <div class="dropdown-item" onclick="selectReport(this, '⇄', 'Passaggi')"><i>⇄</i> Passaggi</div>
+            <div class="dropdown-item" onclick="selectReport(this, '🎯', 'Tiri')"><i>🎯</i> Tiri</div>
+            <div class="dropdown-item" onclick="selectReport(this, '⚡', 'Contrasti')"><i>⚡</i> Contrasti</div>
+            <div class="dropdown-item" onclick="selectReport(this, '🔥', 'xG nel tempo')"><i>🔥</i> xG nel tempo</div>
+            <div class="dropdown-item" onclick="selectReport(this, '💥', 'xT nel tempo')"><i>💥</i> xT nel tempo</div>
+            <div class="dropdown-item" onclick="selectReport(this, '🗺️', 'Heatmap')"><i>🗺️</i> Heatmap</div>
+            <div class="dropdown-item" onclick="selectReport(this, '📊', 'Network Pass')"><i>📊</i> Network Pass</div>
+            <div class="dropdown-item" onclick="selectReport(this, '📈', 'Rendimento')"><i>📈</i> Rendimento</div>
+        </div>`;
+
+    homeStatsDropdown.querySelector('.dropdown-trigger').addEventListener('click', (e) => {
+        e.stopPropagation();
+        const dropdownMenu = homeStatsDropdown.querySelector('.dropdown-menu');
+        dropdownMenu.classList.toggle('open');
+    });
+
+    homeStatsDropdown.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const selectedLabel = homeStatsDropdown.querySelector('#selected-label');
+            selectedLabel.innerHTML = item.innerHTML;
+            homeStatsDropdown.querySelector('.dropdown-menu').classList.remove('show');
+        });
+    });
+
+    const awayStatsDropdown = document.createElement('div');
+    awayStatsDropdown.className = 'dropdown-container';
+    awayStatsDropdown.innerHTML = `
+        <div class="dropdown-trigger" onclick="toggleDropdown()">
+            <span id="selected-label"><i>⇄</i> Passaggi</span>
+            <span>▼</span>
+        </div>
+        <div class="dropdown-menu" id="dropdown-menu">
+            <div class="dropdown-item" onclick="selectReport(this, '⇄', 'Passaggi')"><i>⇄</i> Passaggi</div>
+            <div class="dropdown-item" onclick="selectReport(this, '🎯', 'Tiri')"><i>🎯</i> Tiri</div>
+            <div class="dropdown-item" onclick="selectReport(this, '⚡', 'Contrasti')"><i>⚡</i> Contrasti</div>
+            <div class="dropdown-item" onclick="selectReport(this, '🔥', 'xG nel tempo')"><i>🔥</i> xG nel tempo</div>
+            <div class="dropdown-item" onclick="selectReport(this, '💥', 'xT nel tempo')"><i>💥</i> xT nel tempo</div>
+            <div class="dropdown-item" onclick="selectReport(this, '🗺️', 'Heatmap')"><i>🗺️</i> Heatmap</div>
+            <div class="dropdown-item" onclick="selectReport(this, '📊', 'Network Pass')"><i>📊</i> Network Pass</div>
+            <div class="dropdown-item" onclick="selectReport(this, '📈', 'Rendimento')"><i>📈</i> Rendimento</div>
+        </div>`;
+
+        awayStatsDropdown.querySelector('.dropdown-trigger').addEventListener('click', (e) => {
+        e.stopPropagation();
+        const dropdownMenu = awayStatsDropdown.querySelector('.dropdown-menu');
+        dropdownMenu.classList.toggle('open');
+    });
+
+    awayStatsDropdown.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const selectedLabel = awayStatsDropdown.querySelector('#selected-label');
+            selectedLabel.innerHTML = item.innerHTML;
+            awayStatsDropdown.querySelector('.dropdown-menu').classList.remove('show');
+        });
+    });
+
+    const statsDropdown = document.createElement('div');
+    statsDropdown.className = 'dropdowns-row';
+    statsDropdown.appendChild(homeStatsDropdown);
+    statsDropdown.appendChild(awayStatsDropdown);
 
     const expandedContent = document.createElement('div');
     expandedContent.className = 'expanded-content';
@@ -57,18 +123,22 @@ function createMatchCard(match) {
     awayStatsButtonsPlayer.className = 'stats-buttons-column';
     awayStatsButtonsPlayer.innerHTML = createStatsButtonsHTML('away', match.id, match.awayTeamId, match.awayTeamName, match.homeTeamName, false);
 
+    const matchContext = document.createElement('div');
+    matchContext.className = 'match-context';
+    matchContext.appendChild(topRow);
+    matchContext.appendChild(statsDropdown);
+
     expandedContent.appendChild(homeFormationDiv);
     expandedContent.appendChild(homeStatsButtonsPlayer);
     expandedContent.appendChild(awayFormationDiv);
     expandedContent.appendChild(awayStatsButtonsPlayer);
 
-    matchCard.appendChild(teamsDiv);
-    matchCard.appendChild(scoreButtonsDiv);
+    matchCard.appendChild(matchContext);
     matchCard.appendChild(expandedContent);
     matchCard.appendChild(matchHeader);
 
     matchCard.addEventListener('click', (event) => {
-        if (event.target === matchCard || event.target.classList.contains('teams') || event.target.classList.contains('score-and-buttons')) {
+        if (event.target === matchCard || event.target.classList.contains('match-context')) {
             matchCard.classList.toggle('expanded');
             if (matchCard.classList.contains('expanded')) {
                 loadFormations(match.id, homeFormationDiv, awayFormationDiv, match.homeTeamName, match.awayTeamName);
@@ -145,15 +215,35 @@ export function loadMatchesByDate(date) {
 
             data.tournaments.forEach(tournament => {
                 if (window.tournaments.some(t => t.id === tournament.tournamentId)) {
-                    const tournamentNameDiv = document.createElement('div');
+
+                    const tournamentWrapper = document.createElement('div');
+                    tournamentWrapper.className = 'tournament-wrapper';
+
+                    const tournamentCard = document.createElement('div');
+                    tournamentCard.className = 'tournament-card';
+
+                    const tournamentHeader = document.createElement('div');
+                    tournamentHeader.className = 'tournament-header';
+
+                    const tournamentNameDiv = document.createElement('h2');
                     tournamentNameDiv.className = 'tournament-name';
                     tournamentNameDiv.textContent = tournament.tournamentName;
-                    matchContainer.appendChild(tournamentNameDiv);
+
+                    tournamentHeader.appendChild(tournamentNameDiv);
+                    tournamentCard.appendChild(tournamentHeader);
+
+                    const tournamentContent = document.createElement('div');
+                    tournamentContent.className = 'tournament-content';
 
                     tournament.matches.forEach(match => {
                         const matchCard = createMatchCard(match, tournament.tournamentName);
-                        matchContainer.appendChild(matchCard);
+                        tournamentContent.appendChild(matchCard);
                     });
+
+                    tournamentCard.appendChild(tournamentContent);
+                    tournamentWrapper.appendChild(tournamentCard);
+
+                    matchContainer.appendChild(tournamentWrapper);
                 }
             });
         })

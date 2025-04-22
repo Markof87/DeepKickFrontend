@@ -76,6 +76,8 @@ export function createStatsButtonsHTML(side, matchId, matchTeamId, matchTeamName
 }
 
 export function enableStatButtonFromRadio(event) {
+
+  console.log(event.target);
   const radio = event.target;
   
   const groupName = radio.name; 

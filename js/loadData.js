@@ -156,11 +156,11 @@ function loadFormations(match, homeDiv, awayDiv) {
     fetch(`${API_BASE_URL}/match/${match.id}`).then(res => res.json())
 
         .then(data => {
-            homeDiv.innerHTML = generateFieldPlayers(data, "home", match.id, match.homeTeamName);
-            awayDiv.innerHTML = generateFieldPlayers(data, "away", match.id, match.awayTeamName);
+            homeDiv.innerHTML = generateFieldPlayers(data, "home", match.id);
+            awayDiv.innerHTML = generateFieldPlayers(data, "away", match.id);
 
             loaderOff();
-            document.querySelectorAll('.radio-buttons input[type="radio"]').forEach(input => {
+            document.querySelectorAll('input[type="radio"]').forEach(input => {
                 input.addEventListener('change', enableStatButtonFromRadio);
             });
             document.querySelectorAll('.stats-buttons-column').forEach(el => {
@@ -240,7 +240,7 @@ export function loadMatchesByDate(date) {
     });
 }
 
-function generateFieldPlayers(matchContext, teamSide, matchId, teamName) {
+function generateFieldPlayers(matchContext, teamSide, matchId) {
 
     const openDiv = `
         <div class="formation-pitch">
@@ -280,17 +280,5 @@ function generateFieldPlayers(matchContext, teamSide, matchId, teamName) {
 
     return openDiv + stringPlayer + closeDiv;
 }
-/*`
-<label class="player-dot ${player.position.toLowerCase()}" style="left: ${player.positionX}%; top: ${player.positionY}%">
-    <input type="radio" name="${teamSide}Player-${matchId}" value="${player.playerId}" hidden>
-    <div class="dot"></div>
-    <span class="name">${player.name}</span>
-</label>
-`).join('')}
-//   </div>
-// </div>
-//`
-return "";
 
-*/
 

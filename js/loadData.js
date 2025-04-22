@@ -7,7 +7,7 @@ function createMatchCard(match) {
     const matchCard = document.createElement('div');
     matchCard.className = 'match-card';
     matchCard.setAttribute('data-key', match.id);
-    
+
     const matchHeader = document.createElement('div');
     matchHeader.className = 'match-header';
 
@@ -86,7 +86,7 @@ function createMatchCard(match) {
             <div class="dropdown-item" onclick="selectReport(this, '📈', 'Rendimento')"><i>📈</i> Rendimento</div>
         </div>`;
 
-        awayStatsDropdown.querySelector('.dropdown-trigger').addEventListener('click', (e) => {
+    awayStatsDropdown.querySelector('.dropdown-trigger').addEventListener('click', (e) => {
         e.stopPropagation();
         const dropdownMenu = awayStatsDropdown.querySelector('.dropdown-menu');
         dropdownMenu.classList.toggle('open');
@@ -141,7 +141,7 @@ function createMatchCard(match) {
         if (event.target === matchCard || event.target.classList.contains('match-context')) {
             matchCard.classList.toggle('expanded');
             if (matchCard.classList.contains('expanded')) {
-                loadFormations(match.id, homeFormationDiv, awayFormationDiv, match.homeTeamName, match.awayTeamName);
+                loadFormations(match, homeFormationDiv, awayFormationDiv);
             }
         }
     });
@@ -150,40 +150,19 @@ function createMatchCard(match) {
 }
 
 // Carica le formazioni delle squadre e popola i div
-function loadFormations(matchId, homeDiv, awayDiv, homeName, awayName) {
+function loadFormations(match, homeDiv, awayDiv) {
     loaderOn();
 
-    Promise.all([
-        fetch(`${API_BASE_URL}/match/${matchId}/team/home`).then(res => res.json()),
-        fetch(`${API_BASE_URL}/match/${matchId}/team/away`).then(res => res.json())
-    ])
-        .then(([homeData, awayData]) => {
-            homeDiv.innerHTML = `
-            <span>${homeName} Formation:</span>
-            <div class="radio-buttons">
-                ${homeData.filter(p => p.stats && Object.keys(p.stats).length > 0).map(p => `
-                    <label>
-                        <input type="radio" name="homePlayer-${matchId}" value="${p.playerId}"> ${p.name}
-                    </label>
-                `).join('')}
-            </div>
-        `;
+    fetch(`${API_BASE_URL}/match/${match.id}`).then(res => res.json())
 
-            awayDiv.innerHTML = `
-            <span>${awayName} Formation:</span>
-            <div class="radio-buttons">
-                ${awayData.filter(p => p.stats && Object.keys(p.stats).length > 0).map(p => `
-                    <label>
-                        <input type="radio" name="awayPlayer-${matchId}" value="${p.playerId}"> ${p.name}
-                    </label>
-                `).join('')}
-            </div>
-        `;
+        .then(data => {
+            homeDiv.innerHTML = generateFieldPlayers(data, "home", match.id, match.homeTeamName);
+            awayDiv.innerHTML = generateFieldPlayers(data, "away", match.id, match.awayTeamName);
 
             loaderOff();
             document.querySelectorAll('.radio-buttons input[type="radio"]').forEach(input => {
                 input.addEventListener('change', enableStatButtonFromRadio);
-            });            
+            });
             document.querySelectorAll('.stats-buttons-column').forEach(el => {
                 el.style.display = 'flex';
             });
@@ -195,7 +174,6 @@ function loadFormations(matchId, homeDiv, awayDiv, homeName, awayName) {
 }
 
 export function loadMatchesByDate(date) {
-    console.log("Loading matches for date:", date);
     const matchContainer = document.getElementById('match-container');
     if (matchContainer) {
         matchContainer.innerHTML = '';
@@ -251,7 +229,7 @@ export function loadMatchesByDate(date) {
 
     document.addEventListener('click', (e) => {
         const statButton = e.target.closest('.stat-btn');
-        if (statButton && statButton.closest('.stats-buttons-row')) {            
+        if (statButton && statButton.closest('.stats-buttons-row')) {
             const stat = e.target.getAttribute('data-stat');
             const matchId = e.target.getAttribute('data-match');
             const matchTeamId = e.target.getAttribute('data-match-team');
@@ -261,3 +239,58 @@ export function loadMatchesByDate(date) {
         }
     });
 }
+
+function generateFieldPlayers(matchContext, teamSide, matchId, teamName) {
+
+    const openDiv = `
+        <div class="formation-pitch">
+        <div class="pitch">
+          <div class="half-line"></div>
+          <div class="center-circle"></div>
+          <div class="penalty-area left"></div>
+          <div class="penalty-area right"></div>
+          <div class="goal-area left"></div>
+          <div class="goal-area right"></div>
+          <div class="penalty-spot left"></div>
+          <div class="penalty-spot right"></div>
+          <div class="penalty-arc left"></div>
+          <div class="penalty-arc right"></div>`;
+
+    var stringPlayer = "";
+
+    matchContext[teamSide].players.map((player) => {
+        const playerIndex = matchContext[teamSide].formations[0].playerIds.indexOf(player.playerId);
+        const playerPosition = matchContext[teamSide].formations[0].formationPositions[playerIndex];
+        const direction = teamSide == "home" ? "left" : "right";
+
+        if (playerPosition != undefined) {
+
+            stringPlayer = stringPlayer + ` <label class="player-dot ${player.position.toLowerCase()}" style="${direction}: ${playerPosition.vertical * 10}%; top: ${playerPosition.horizontal * 10 - 4}%">
+                <input type="radio" name="${teamSide}Player-${matchId}" value="${player.playerId}" hidden>
+                <div class="dot"></div>
+                <span class="name">${player.name}</span>
+            </label> `;
+        }
+
+    });
+    const closeDiv = `
+        </div>
+        </div>
+    `;
+
+    return openDiv + stringPlayer + closeDiv;
+}
+/*`
+<label class="player-dot ${player.position.toLowerCase()}" style="left: ${player.positionX}%; top: ${player.positionY}%">
+    <input type="radio" name="${teamSide}Player-${matchId}" value="${player.playerId}" hidden>
+    <div class="dot"></div>
+    <span class="name">${player.name}</span>
+</label>
+`).join('')}
+//   </div>
+// </div>
+//`
+return "";
+
+*/
+

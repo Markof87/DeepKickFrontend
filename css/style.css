@@ -597,3 +597,186 @@ select:focus {
   width: 20px;
   text-align: center;
 }
+
+/* Campo da calcio stilizzato */
+.formation-pitch {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  aspect-ratio: 2/1;
+  background: #2d5a2700;
+  border: 2px solid white;
+  margin: 1rem auto;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.pitch {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Linea di metà campo */
+.half-line {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  background: white;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+/* Cerchio di centrocampo */
+.center-circle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 16%;
+  height: 32%;
+  border: 2px solid white;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+/* Aree di rigore */
+.penalty-area {
+  position: absolute;
+  width: 18%;
+  height: 60%;
+  top: 20%;
+  border: 2px solid white;
+  background: transparent;
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+.penalty-area.left {
+  left: 0;
+  border-left: 0;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.penalty-area.right {
+  right: 0;
+  border-right: 0;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+/* Aree piccole (goal area, 6-yard box) */
+.goal-area {
+  position: absolute;
+  width: 8%;
+  height: 24%;
+  top: 38%;
+  border: 2px solid white;
+  background: transparent;
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+.goal-area.left {
+  left: 0;
+  border-left: 0;
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+
+.goal-area.right {
+  right: 0;
+  border-right: 0;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+/* Dischetto del rigore */
+.penalty-spot {
+  position: absolute;
+  width: 1.5%;
+  height: 0;
+  border-radius: 50%;
+  background: white;
+  z-index: 3;
+}
+
+.penalty-spot.left {
+  left: 12%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.penalty-spot.right {
+  right: 12%;
+  top: 50%;
+  transform: translate(50%, -50%);
+}
+
+/* Semicerchio fuori area di rigore */
+.penalty-arc {
+  position: absolute;
+  width: 16%;
+  height: 32%;
+  border: 2px solid white;
+  border-radius: 50%;
+  background: transparent;
+  z-index: 2;
+  border-bottom: none;
+  border-left: none;
+  border-right: none;
+}
+
+.penalty-arc.left {
+  left: 17%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.penalty-arc.right {
+  right: 17%;
+  top: 50%;
+  transform: translate(50%, -50%) rotate(270deg);
+}
+
+/* Pallini giocatori */
+.player-dot {
+  position: absolute;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.player-dot .dot {
+  width: 20px;
+  height: 20px;
+  background: #1a73e8;
+  border-radius: 50%;
+  border: 2px solid white;
+  transition: inherit;
+}
+
+.player-dot input:checked+.dot {
+  background: gold;
+  border-color: black;
+  transform: scale(1.3);
+}
+
+.player-dot .name {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.player-dot:hover .name {
+  opacity: 1;
+}

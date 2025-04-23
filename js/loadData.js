@@ -261,11 +261,12 @@ function generateFieldPlayers(matchContext, teamSide, matchId) {
     matchContext[teamSide].players.map((player) => {
         const playerIndex = matchContext[teamSide].formations[0].playerIds.indexOf(player.playerId);
         const playerPosition = matchContext[teamSide].formations[0].formationPositions[playerIndex];
-        const direction = teamSide == "home" ? "left" : "right";
+        const orientation = teamSide == "home" ? "left" : "right";
+        const direction = teamSide == "home" ? "bottom" : "top";
 
         if (playerPosition != undefined) {
 
-            stringPlayer = stringPlayer + ` <label class="player-dot ${player.position.toLowerCase()}" style="${direction}: ${playerPosition.vertical * 10}%; top: ${playerPosition.horizontal * 10 - 4}%">
+            stringPlayer = stringPlayer + ` <label class="player-dot ${player.position.toLowerCase()}" style="${orientation}: ${playerPosition.vertical * 10}%; ${direction}: ${playerPosition.horizontal * 10 - 4}%">
                 <input type="radio" name="${teamSide}Player-${matchId}" value="${player.playerId}" hidden>
                 <div class="dot"></div>
                 <span class="name">${player.name}</span>

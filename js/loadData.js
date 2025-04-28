@@ -302,7 +302,7 @@ export function loadStatsByTournamentSeason(tournamentId, season, stat_type, pla
 }
 
 function renderTable(data) {
-    if(!data) {
+    if (!data) {
         console.error("Data is not in the expected format:", data);
         return;
     }
@@ -312,9 +312,9 @@ function renderTable(data) {
 
     function extractColumns(obj) {
         for (const key in obj) {
-            if(JSON.stringify(Object.keys(obj[key])) == JSON.stringify(teams))
+            if (JSON.stringify(Object.keys(obj[key])) == JSON.stringify(teams))
                 columns.push(key);
-            else{
+            else {
                 for (const subKey in obj[key]) {
                     columns.push(`${key}.${subKey}`);
                 }
@@ -326,7 +326,7 @@ function renderTable(data) {
     let tableData;
 
     tableData = teams.map(team => {
-        const row = {}; 
+        const row = {};
         columns.forEach(col => {
             row[col] = getByPath(data, col, team);
         });
@@ -342,45 +342,68 @@ function generateTable(tableData, columnsData, sortKey = null, sortAsc = true) {
     let sortKeyTable = null;
     let sortAscTable = true;
 
-    d3.select("#table-container").selectAll("*").remove();
+    d3.select("#cyber-table-container").selectAll("*").remove();
 
-    const table = d3.select("#table-container")
-      .append("table")
-      .attr("class", "cyber-table")
-      .style("width", "100%");
-  
+    const table = d3.select("#cyber-table-container")
+        .append("table")
+        .attr("class", "cyber-table")
+        .style("width", "100%");
+
     // Intestazione
     const thead = table.append("thead");
     const trHead = thead.append("tr");
     trHead.selectAll("th")
-      .data(columnsData)
-      .enter()
-      .append("th")
-      .attr("class", d => "cyber-h cyber-glitch-2 sortable" + (sortKey === d ? (sortAsc ? " sorted-asc" : " sorted-desc") : ""))
-      .text(d => d)
-      .on("click", (event, d) => {
-        if (sortKey == null) 
-            sortAscTable = true;
-        else
-            sortAscTable = !sortAsc;
+        .data(columnsData)
+        .enter()
+        .append("th")
+        .attr("class", d => "cyber-h cyber-glitch-2 sortable" + (sortKey === d ? (sortAsc ? " sorted-asc" : " sorted-desc") : ""))
+        .text(d => d)
+        .on("click", (event, d) => {
+            if (sortKey == null)
+                sortAscTable = true;
+            else
+                sortAscTable = !sortAsc;
 
-        sortKeyTable = d;
-        let tableDataSorted = sortByKey(tableData, sortKeyTable, sortAscTable);
-        generateTable(tableDataSorted, columnsData, sortKeyTable, sortAscTable);
-      });
-  
-    // Corpo
+            sortKeyTable = d;
+            let tableDataSorted = sortByKey(tableData, sortKeyTable, sortAscTable);
+            generateTable(tableDataSorted, columnsData, sortKeyTable, sortAscTable);
+        });
+
     const tbody = table.append("tbody");
     const rows = tbody.selectAll("tr")
-    .data(tableData)
-    .enter()
-    .append("tr");
+        .data(tableData)
+        .enter()
+        .append("tr");
 
     rows.selectAll("td")
-    .data(row => columnsData.map(col => row[col]))
-    .enter()
-    .append("td")
-    .text(d => d);
+        .data(row => columnsData.map(col => row[col]))
+        .enter()
+        .append("td")
+        .text(d => d);
+
+    function syncScrollbars() {
+        const fake = document.querySelector('.cyber-scroll-fake');
+        const real = document.querySelector('.cyber-table-container');
+        fake.scrollLeft = real.scrollLeft;
+        real.scrollLeft = fake.scrollLeft;
+    }
+
+    function updateFakeScrollbarWidth() {
+        const table = document.querySelector('.cyber-table');
+        const fakeDiv = document.querySelector('.cyber-scroll-fake > div');
+        fakeDiv.style.width = table.scrollWidth + 'px';
+    }
+
+    document.querySelector('.cyber-scroll-fake').addEventListener('scroll', function () {
+        document.querySelector('.cyber-table-container').scrollLeft = this.scrollLeft;
+    });
+    document.querySelector('.cyber-table-container').addEventListener('scroll', function () {
+        document.querySelector('.cyber-scroll-fake').scrollLeft = this.scrollLeft;
+    });
+
+    window.addEventListener('resize', updateFakeScrollbarWidth);
+    updateFakeScrollbarWidth();
+
 }
 
 function getByPath(obj, path, team) {
@@ -388,8 +411,8 @@ function getByPath(obj, path, team) {
     const parts = path.split(".");
     let curr = obj;
     for (let part of parts) {
-      curr = curr[part];
-      if (!curr) return undefined;
+        curr = curr[part];
+        if (!curr) return undefined;
     }
     return curr[team];
 }
@@ -397,30 +420,30 @@ function getByPath(obj, path, team) {
 function filterTable() {
     const value = d3.select("#table-filter").property("value").toLowerCase();
     filteredData = tableData.filter(row =>
-      columns.some(col => String(row[col.key]).toLowerCase().includes(value))
+        columns.some(col => String(row[col.key]).toLowerCase().includes(value))
     );
     sortTable();
     renderTable(filteredData);
-  }
-  
-  // Funzione di ordinamento
+}
+
+// Funzione di ordinamento
 function sortByKey(data, key, ascending = true) {
     return data.slice().sort((a, b) => {
         const valA = a[key]
         const valB = b[key]
 
-        if(valA === null || valA === undefined) return 1;
-        if(valB === null || valB === undefined) return -1;
+        if (valA === null || valA === undefined) return 1;
+        if (valB === null || valB === undefined) return -1;
 
-        if(typeof valA === 'number' && typeof valB === 'number') {
+        if (typeof valA === 'number' && typeof valB === 'number') {
             return ascending ? valA - valB : valB - valA;
         }
 
-        return ascending ? 
+        return ascending ?
             String(valA).localeCompare(String(valB), undefined, { sensitivity: 'base' }) :
             String(valB).localeCompare(String(valA), undefined, { sensitivity: 'base' });
     });
 }
-  
-  // Event listener per filtro
-  //d3.select("#table-filter").on("input", filterTable);
+
+// Event listener per filtro
+//d3.select("#table-filter").on("input", filterTable);

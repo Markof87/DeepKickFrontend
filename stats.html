@@ -19,20 +19,56 @@
     <div id="navbar-placeholder"></div>
     <script>
       fetch('include/navbar.html')
-      .then(response => response.text())
-      .then(html => {
-        document.getElementById('navbar-placeholder').innerHTML = html;
-      })
-      .catch(error => console.error('Error loading navbar:', error));
+        .then(response => response.text())
+        .then(html => {
+          document.getElementById('navbar-placeholder').innerHTML = html;
+        })
+        .catch(error => console.error('Error loading navbar:', error));
     </script>
 
     <header class="header" data-key="tournaments">Campionati</header>
 
     <section class="match-list">
       <div class="table-controls">
-        <input type="text" id="table-filter" placeholder="Filtra squadre o valori..." autocomplete="off">
+        <input type="text" id="table-filter" placeholder="Filtra squadre o valori..." autocomplete="off" />
+
+        <div class="cyber-select">
+          <div class="cyber-select__selected" tabindex="0">
+            <span id="cyber-select-label">Scegli Campionato</span>
+            <span class="cyber-select__arrow">&#9662;</span>
+          </div>
+          <div class="cyber-select__dropdown">
+            <div class="cyber-select__group">
+              <div class="cyber-select__item cyber-select__submenu-toggle">
+                Top 5 Campionati
+                <span class="cyber-select__arrow">&#9656;</span>
+              </div>
+              <div class="cyber-select__submenu">
+                <div class="cyber-select__item" data-value="premier">Premier League</div>
+                <div class="cyber-select__item" data-value="laliga">LaLiga</div>
+                <div class="cyber-select__item" data-value="seriea">Serie A</div>
+                <div class="cyber-select__item" data-value="bundesliga">Bundesliga</div>
+                <div class="cyber-select__item" data-value="ligue1">Ligue 1</div>
+              </div>
+            </div>
+            <div class="cyber-select__item" id="altri-campionati">Altri Campionati <span
+                class="cyber-select__arrow">&#9656;</span></div>
+            <div class="cyber-select__submenu" id="altri-campionati-list"></div>
+          </div>
+        </div>
+        <label class="cyber-flag">
+          <input type="checkbox" class="cyber-flag__input" />
+          <span class="cyber-flag__box"></span>
+          <span class="cyber-flag__label">Players</span>
+        </label>
       </div>
-      <div id="table-container"></div>
+      <div id="table-container">
+        <div class="cyber-scroll-fake">
+          <div></div>
+        </div>
+        <div class="cyber-table-container" id="cyber-table-container">
+        </div>
+      </div>
 
 
     </section>
@@ -44,6 +80,59 @@
   <script src="js/utils.js" type="module"></script>
   <script type="module">
     import { loadStatsByTournamentSeason } from './js/loadData.js';
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const select = document.querySelector('.cyber-select');
+      const selected = select.querySelector('.cyber-select__selected');
+      const dropdown = select.querySelector('.cyber-select__dropdown');
+      const altriBtn = select.querySelector('#altri-campionati');
+      const altriList = select.querySelector('#altri-campionati-list');
+      let altriLoaded = false;
+
+      selected.addEventListener('click', () => {
+        select.classList.toggle('open');
+      });
+
+      // Submenu for Top 5: handled by CSS :hover
+
+      // Altri Campionati submenu (on click)
+      altriBtn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        if (!altriLoaded) {
+          // Sostituisci con il tuo endpoint JSON reale
+          const response = await fetch('altri_campionati.json');
+          const campionati = await response.json();
+          altriList.innerHTML = '';
+          campionati.forEach(c => {
+            const div = document.createElement('div');
+            div.className = 'cyber-select__item';
+            div.textContent = c.nome;
+            div.dataset.value = c.id;
+            altriList.appendChild(div);
+          });
+          altriLoaded = true;
+        }
+        altriList.classList.toggle('open');
+      });
+
+      // Selezione voce
+      select.addEventListener('click', function (e) {
+        if (e.target.classList.contains('cyber-select__item') && !e.target.classList.contains('cyber-select__submenu-toggle')) {
+          selected.querySelector('span').textContent = e.target.textContent;
+          select.classList.remove('open');
+          altriList.classList.remove('open');
+          // Qui puoi aggiungere la tua logica di filtro tabella
+        }
+      });
+
+      // Chiudi dropdown cliccando fuori
+      document.addEventListener('click', function (e) {
+        if (!select.contains(e.target)) {
+          select.classList.remove('open');
+          altriList.classList.remove('open');
+        }
+      });
+    });
 
     loadStatsByTournamentSeason("GER", "2425", "passing", true);
     /* I tipi possono essere:
@@ -71,9 +160,9 @@
     ‘misc’
 
     */
-    
+
   </script>
-  
+
 
 </body>
 

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neon Football UI</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+  <div id="loader">
+    <div class="ball-loader"></div>
+  </div>
+
+  <div class="app">
+    <div id="navbar-placeholder"></div>
+    <script>
+      fetch('include/navbar.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('navbar-placeholder').innerHTML = html;
+      })
+      .catch(error => console.error('Error loading navbar:', error));
+    </script>
+
+    <header class="header" data-key="tournaments">Campionati</header>
+
+    <section class="match-list">
+      <div class="table-controls">
+        <input type="text" id="table-filter" placeholder="Filtra squadre o valori..." autocomplete="off">
+      </div>
+      <div id="table-container"></div>
+
+
+    </section>
+
+  </div>
+
+  <script src="js/script.js"></script>
+  <script src="js/loadData.js" type="module"></script>
+  <script src="js/utils.js" type="module"></script>
+  <script type="module">
+    import { loadStatsByTournamentSeason } from './js/loadData.js';
+
+    loadStatsByTournamentSeason("GER", "2425", "passing", true);
+    /* I tipi possono essere:
+
+    ‘standard’
+
+    ‘keeper’
+
+    ‘keeper_adv’
+
+    ‘shooting’
+
+    ‘passing’
+
+    ‘passing_types’
+
+    ‘goal_shot_creation’
+
+    ‘defense’
+
+    ‘possession’
+
+    ‘playing_time’
+
+    ‘misc’
+
+    */
+    
+  </script>
+  
+
+</body>
+
+</html>

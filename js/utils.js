@@ -51,7 +51,27 @@ export function footballLoader() {
 
 export function loaderOn() {
   const loader = document.getElementById('loader');
-  const overlay = document.getElementById('overlay');
+  let overlay = document.getElementById('overlay');
+
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'overlay';
+    overlay.style.position = 'fixed';
+    overlay.style.top = 0;
+    overlay.style.left = 0;
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.50)';
+    overlay.style.zIndex = 9998;
+    overlay.style.pointerEvents = 'auto';
+    overlay.style.display = 'flex';
+    overlay.style.alignItems = 'center';
+    overlay.style.justifyContent = 'center';
+
+    document.body.appendChild(overlay);
+    overlay.appendChild(loader);
+  }
+
   loader.classList.remove('hidden');
   overlay.style.display = 'flex';
 }

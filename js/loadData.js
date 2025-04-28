@@ -281,4 +281,145 @@ function generateFieldPlayers(matchContext, teamSide, matchId) {
     return openDiv + stringPlayer + closeDiv;
 }
 
+export function loadStatsByTournamentSeason(tournamentId, season, stat_type, player) {
+    const matchContainer = document.getElementById('match-container');
+    if (matchContainer) {
+        matchContainer.innerHTML = '';
+    }
 
+    loaderOn();
+
+    const playerPath = player ? "/player" : "";
+    fetch(`${API_BASE_URL}/datatable/teamseason_base_stats/tournament/${tournamentId}/season/${season}/type/${stat_type}${playerPath}`)
+        .then(response => response.json())
+        .then(data => {
+            renderTable(data);
+            loaderOff();
+        })
+        .catch(error => console.error('Error fetching data:', error));
+
+}
+
+function renderTable(data) {
+    if(!data) {
+        console.error("Data is not in the expected format:", data);
+        return;
+    }
+
+    const teams = Object.keys(Object.values(data)[0]);
+    const columns = ["team"];
+
+    function extractColumns(obj) {
+        for (const key in obj) {
+            if(JSON.stringify(Object.keys(obj[key])) == JSON.stringify(teams))
+                columns.push(key);
+            else{
+                for (const subKey in obj[key]) {
+                    columns.push(`${key}.${subKey}`);
+                }
+            }
+        }
+    }
+
+    extractColumns(data);
+    let tableData;
+
+    tableData = teams.map(team => {
+        const row = {}; 
+        columns.forEach(col => {
+            row[col] = getByPath(data, col, team);
+        });
+        return row;
+    });
+
+    generateTable(tableData, columns);
+
+}
+
+function generateTable(tableData, columnsData, sortKey = null, sortAsc = true) {
+
+    let sortKeyTable = null;
+    let sortAscTable = true;
+
+    d3.select("#table-container").selectAll("*").remove();
+
+    const table = d3.select("#table-container")
+      .append("table")
+      .attr("class", "cyber-table")
+      .style("width", "100%");
+  
+    // Intestazione
+    const thead = table.append("thead");
+    const trHead = thead.append("tr");
+    trHead.selectAll("th")
+      .data(columnsData)
+      .enter()
+      .append("th")
+      .attr("class", d => "cyber-h cyber-glitch-2 sortable" + (sortKey === d ? (sortAsc ? " sorted-asc" : " sorted-desc") : ""))
+      .text(d => d)
+      .on("click", (event, d) => {
+        if (sortKey == null) 
+            sortAscTable = true;
+        else
+            sortAscTable = !sortAsc;
+
+        sortKeyTable = d;
+        let tableDataSorted = sortByKey(tableData, sortKeyTable, sortAscTable);
+        generateTable(tableDataSorted, columnsData, sortKeyTable, sortAscTable);
+      });
+  
+    // Corpo
+    const tbody = table.append("tbody");
+    const rows = tbody.selectAll("tr")
+    .data(tableData)
+    .enter()
+    .append("tr");
+
+    rows.selectAll("td")
+    .data(row => columnsData.map(col => row[col]))
+    .enter()
+    .append("td")
+    .text(d => d);
+}
+
+function getByPath(obj, path, team) {
+    if (path === "team") return team;
+    const parts = path.split(".");
+    let curr = obj;
+    for (let part of parts) {
+      curr = curr[part];
+      if (!curr) return undefined;
+    }
+    return curr[team];
+}
+
+function filterTable() {
+    const value = d3.select("#table-filter").property("value").toLowerCase();
+    filteredData = tableData.filter(row =>
+      columns.some(col => String(row[col.key]).toLowerCase().includes(value))
+    );
+    sortTable();
+    renderTable(filteredData);
+  }
+  
+  // Funzione di ordinamento
+function sortByKey(data, key, ascending = true) {
+    return data.slice().sort((a, b) => {
+        const valA = a[key]
+        const valB = b[key]
+
+        if(valA === null || valA === undefined) return 1;
+        if(valB === null || valB === undefined) return -1;
+
+        if(typeof valA === 'number' && typeof valB === 'number') {
+            return ascending ? valA - valB : valB - valA;
+        }
+
+        return ascending ? 
+            String(valA).localeCompare(String(valB), undefined, { sensitivity: 'base' }) :
+            String(valB).localeCompare(String(valA), undefined, { sensitivity: 'base' });
+    });
+}
+  
+  // Event listener per filtro
+  //d3.select("#table-filter").on("input", filterTable);

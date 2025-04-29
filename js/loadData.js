@@ -307,7 +307,7 @@ function renderTable(data) {
         return;
     }
 
-    const teams = Object.keys(Object.values(data)[0]);
+    const teams = data["players_used"] == undefined ? Object.keys(data["age"]) : Object.keys(data["players_used"]);
     const columns = ["team"];
 
     function extractColumns(obj) {
@@ -335,12 +335,49 @@ function renderTable(data) {
 
     generateTable(tableData, columns);
 
+    const cyberFlagMinsInput = document.querySelector('.cyber-flag-mins_input');
+    cyberFlagMinsInput.addEventListener('change', function () {
+        const table = document.querySelector('.cyber-table');
+        if (!table) return;
+
+        const headers = Array.from(table.querySelectorAll('thead th'));
+        let targetIdx = headers.findIndex(th => th.textContent.trim().toLowerCase() === '90s');
+        let colName = '90s';
+        if (targetIdx === -1) {
+            targetIdx = headers.findIndex(th => th.textContent.trim().toLowerCase() === 'playing time.min');
+            colName = 'Playing Time.Min';
+        }
+        console.log('cyberFlagMinsInput', this.checked);
+
+        if (targetIdx === -1) return; 
+        
+        console.log(colName, targetIdx);
+
+        const rows = table.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (!cells[targetIdx]) return;
+            const value = parseFloat(cells[targetIdx].textContent.replace(',', '.'));
+            if(colName == '90s') {
+                if (!isNaN(value) && value < 10) {
+                    row.style.display = cyberFlagMinsInput.checked ? 'none' : 'table-row';
+                }
+            }
+            else if (colName == 'Playing Time.Min') {
+                if (!isNaN(value) && value < 900) {
+                    row.style.display = cyberFlagMinsInput.checked ? 'none' : 'table-row';
+                }
+            }
+        });
+
+    });
+
 }
 
 function generateTable(tableData, columnsData, sortKey = null, sortAsc = true) {
 
     let sortKeyTable = null;
-    let sortAscTable = true;
+    let sortAscTable = false;
 
     d3.select("#cyber-table-container").selectAll("*").remove();
 
@@ -360,7 +397,7 @@ function generateTable(tableData, columnsData, sortKey = null, sortAsc = true) {
         .text(d => d)
         .on("click", (event, d) => {
             if (sortKey == null)
-                sortAscTable = true;
+                sortAscTable = false;
             else
                 sortAscTable = !sortAsc;
 

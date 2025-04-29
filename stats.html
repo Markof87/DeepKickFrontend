@@ -33,33 +33,60 @@
         <input type="text" id="table-filter" placeholder="Filtra squadre o valori..." autocomplete="off" />
 
         <div class="cyber-select">
-          <div class="cyber-select__selected" tabindex="0">
+          <div class="cyber-select_selected" tabindex="0">
             <span id="cyber-select-label">Scegli Campionato</span>
-            <span class="cyber-select__arrow">&#9662;</span>
+            <span class="cyber-select_arrow">&#9662;</span>
           </div>
-          <div class="cyber-select__dropdown">
-            <div class="cyber-select__group">
-              <div class="cyber-select__item cyber-select__submenu-toggle">
+          <div class="cyber-select_dropdown">
+            <div class="cyber-select_group">
+              <div class="cyber-select_item cyber-select_submenu-toggle">
                 Top 5 Campionati
-                <span class="cyber-select__arrow">&#9656;</span>
+                <span class="cyber-select_arrow">&#9656;</span>
               </div>
-              <div class="cyber-select__submenu">
-                <div class="cyber-select__item" data-value="premier">Premier League</div>
-                <div class="cyber-select__item" data-value="laliga">LaLiga</div>
-                <div class="cyber-select__item" data-value="seriea">Serie A</div>
-                <div class="cyber-select__item" data-value="bundesliga">Bundesliga</div>
-                <div class="cyber-select__item" data-value="ligue1">Ligue 1</div>
+              <div class="cyber-select_submenu">
+                <div class="cyber-select_item" data-value="ENG">Premier League</div>
+                <div class="cyber-select_item" data-value="ESP">LaLiga</div>
+                <div class="cyber-select_item" data-value="ITA">Serie A</div>
+                <div class="cyber-select_item" data-value="GER">Bundesliga</div>
+                <div class="cyber-select_item" data-value="FRA">Ligue 1</div>
               </div>
             </div>
-            <div class="cyber-select__item" id="altri-campionati">Altri Campionati <span
-                class="cyber-select__arrow">&#9656;</span></div>
-            <div class="cyber-select__submenu" id="altri-campionati-list"></div>
+            <div class="cyber-select_item cyber-select_item--disabled" id="altri-campionati" aria-disabled="true">
+              Altri Campionati <span class="cyber-select_arrow">&#9656;</span>
+            </div>
+            <div class="cyber-select_submenu" id="altri-campionati-list"></div>
+          </div>
+        </div>
+        <div class="cyber-select">
+          <div class="cyber-select_selected" tabindex="0">
+            <span id="cyber-select-label">Statistiche</span>
+            <span class="cyber-select_arrow">&#9662;</span>
+          </div>
+          <div class="cyber-select_dropdown">
+            <div class="cyber-select_group">
+              <div class="cyber-select_item" data-stats="standard">Standard</div>
+              <div class="cyber-select_item" data-stats="keeper">Portiere</div>
+              <div class="cyber-select_item" data-stats="keeper_adv">Portiere (avanzate)</div>
+              <div class="cyber-select_item" data-stats="shooting">Tiri</div>
+              <div class="cyber-select_item" data-stats="passing">Passaggi</div>
+              <div class="cyber-select_item" data-stats="passing_types">Passaggi (tipi)</div>
+              <div class="cyber-select_item" data-stats="goal_shot_creation">Goal e creazione tiri</div>
+              <div class="cyber-select_item" data-stats="defense">Difesa</div>
+              <div class="cyber-select_item" data-stats="possession">Possesso</div>
+              <div class="cyber-select_item" data-stats="playing_time">Tempo di gioco</div>
+              <div class="cyber-select_item" data-stats="misc">Altro</div>
+            </div>
           </div>
         </div>
         <label class="cyber-flag">
-          <input type="checkbox" class="cyber-flag__input" />
-          <span class="cyber-flag__box"></span>
-          <span class="cyber-flag__label">Players</span>
+          <input type="checkbox" class="cyber-flag_input" />
+          <span class="cyber-flag_box"></span>
+          <span class="cyber-flag_label">Players</span>
+        </label>
+        <label class="cyber-flag-mins">
+          <input type="checkbox" class="cyber-flag-mins_input" />
+          <span class="cyber-flag_box"></span>
+          <span class="cyber-flag_label">Minuti Giocati >900</span>
         </label>
       </div>
       <div id="table-container">
@@ -82,84 +109,81 @@
     import { loadStatsByTournamentSeason } from './js/loadData.js';
 
     document.addEventListener('DOMContentLoaded', function () {
-      const select = document.querySelector('.cyber-select');
-      const selected = select.querySelector('.cyber-select__selected');
-      const dropdown = select.querySelector('.cyber-select__dropdown');
-      const altriBtn = select.querySelector('#altri-campionati');
-      const altriList = select.querySelector('#altri-campionati-list');
+
+      const selects = document.querySelectorAll('.cyber-select');
       let altriLoaded = false;
+      let isPlayerChecked = false;
 
-      selected.addEventListener('click', () => {
-        select.classList.toggle('open');
+      const cyberFlagInput = document.querySelector('.cyber-flag_input');
+      cyberFlagInput.addEventListener('change', function () {
+        isPlayerChecked = cyberFlagInput.checked;
+
+        const selectedValue = selects[0].querySelector('.cyber-select_selected').dataset.value;
+        const selectedStats = selects[1].querySelector('.cyber-select_selected').dataset.stats;
+
+        loadStatsByTournamentSeason(selectedValue == undefined ? "ITA" : selectedValue, "2425", selectedStats == undefined ? "standard" : selectedStats, isPlayerChecked);
       });
 
-      // Submenu for Top 5: handled by CSS :hover
+      selects.forEach(select => {
+        select.addEventListener('click', function (e) {
+          select.classList.toggle('open');
+          const altriBtn = select.querySelector('#altri-campionati');
+          if(altriBtn) {
+            altriBtn.addEventListener('click', async (e) => {
+              e.stopPropagation();
+              if (!altriLoaded) {
+                // Sostituisci con il tuo endpoint JSON reale
+                const response = await fetch('altri_campionati.json');
+                const campionati = await response.json();
+                altriList.innerHTML = '';
+                campionati.forEach(c => {
+                  const div = document.createElement('div');
+                  div.className = 'cyber-select_item';
+                  div.textContent = c.nome;
+                  div.dataset.value = c.id;
+                  //altriList.appendChild(div);
+                });
+                altriLoaded = true;
+              }
+              altriList.classList.toggle('open');
+            });
+          }
 
-      // Altri Campionati submenu (on click)
-      altriBtn.addEventListener('click', async (e) => {
-        e.stopPropagation();
-        if (!altriLoaded) {
-          // Sostituisci con il tuo endpoint JSON reale
-          const response = await fetch('altri_campionati.json');
-          const campionati = await response.json();
-          altriList.innerHTML = '';
-          campionati.forEach(c => {
-            const div = document.createElement('div');
-            div.className = 'cyber-select__item';
-            div.textContent = c.nome;
-            div.dataset.value = c.id;
-            altriList.appendChild(div);
-          });
-          altriLoaded = true;
-        }
-        altriList.classList.toggle('open');
+          if (e.target.classList.contains('cyber-select_item') && !e.target.classList.contains('cyber-select_submenu-toggle')) {
+            const selected = select.querySelector('.cyber-select_selected');
+            selected.querySelector('span').textContent = e.target.textContent;
+            selected.dataset.value = e.target.dataset.stats;
+            select.classList.remove('open');
+            //altriList.classList.remove('open');
+
+            if(e.target.dataset.value){
+              selected.dataset.value = e.target.dataset.value;
+              const selectedValue = e.target.dataset.value;
+              const selectedStats = selects[1].querySelector('.cyber-select_selected').dataset.stats;
+              loadStatsByTournamentSeason(selectedValue, "2425", selectedStats == undefined ? "standard" : selectedStats, isPlayerChecked);
+            } 
+            else if(e.target.dataset.stats) {
+              selected.dataset.stats = e.target.dataset.stats;
+              const selectedStats = e.target.dataset.stats;
+              const selectedValue = selects[0].querySelector('.cyber-select_selected').dataset.value;
+              loadStatsByTournamentSeason(selectedValue == undefined ? "ITA" : selectedValue, "2425", selectedStats, isPlayerChecked);
+            }
+          }
+        });
+
+        // Chiudi dropdown cliccando fuori
+        document.addEventListener('click', function (e) {
+          if (!select.contains(e.target)) {
+            select.classList.remove('open');
+            //altriList.classList.remove('open');
+          }
+        });
       });
 
-      // Selezione voce
-      select.addEventListener('click', function (e) {
-        if (e.target.classList.contains('cyber-select__item') && !e.target.classList.contains('cyber-select__submenu-toggle')) {
-          selected.querySelector('span').textContent = e.target.textContent;
-          select.classList.remove('open');
-          altriList.classList.remove('open');
-          // Qui puoi aggiungere la tua logica di filtro tabella
-        }
-      });
 
-      // Chiudi dropdown cliccando fuori
-      document.addEventListener('click', function (e) {
-        if (!select.contains(e.target)) {
-          select.classList.remove('open');
-          altriList.classList.remove('open');
-        }
-      });
     });
 
-    loadStatsByTournamentSeason("ENG", "2425", "passing", true);
-    /* I tipi possono essere:
-
-    ‘standard’
-
-    ‘keeper’
-
-    ‘keeper_adv’
-
-    ‘shooting’
-
-    ‘passing’
-
-    ‘passing_types’
-
-    ‘goal_shot_creation’
-
-    ‘defense’
-
-    ‘possession’
-
-    ‘playing_time’
-
-    ‘misc’
-
-    */
+    loadStatsByTournamentSeason("ITA", "2425", "standard", false);
 
   </script>
 

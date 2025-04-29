@@ -1024,7 +1024,7 @@ td.highlight {
   user-select: none;
 }
 
-.cyber-select__selected {
+.cyber-select_selected {
   padding: 14px 18px;
   cursor: pointer;
   display: flex;
@@ -1035,18 +1035,18 @@ td.highlight {
   transition: background 0.2s;
 }
 
-.cyber-select__selected:focus {
+.cyber-select_selected:focus {
   outline: 2px solid #f0f;
 }
 
-.cyber-select__arrow {
+.cyber-select_arrow {
   margin-left: 8px;
   color: #f0f;
   font-size: 1.1em;
   transition: transform 0.2s;
 }
 
-.cyber-select__dropdown {
+.cyber-select_dropdown {
   display: none;
   position: absolute;
   top: 110%;
@@ -1060,30 +1060,30 @@ td.highlight {
   padding: 6px 0;
 }
 
-.cyber-select.open .cyber-select__dropdown {
+.cyber-select.open .cyber-select_dropdown {
   display: block;
 }
 
-.cyber-select__item {
+.cyber-select_item {
   padding: 12px 18px;
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
   border-left: 3px solid transparent;
 }
 
-.cyber-select__item:hover,
-.cyber-select__item:focus {
+.cyber-select_item:hover,
+.cyber-select_item:focus {
   background: #0ff2;
   color: #fff;
   text-shadow: 0 0 8px #00eaff;
   border-left: 3px solid #f0f;
 }
 
-.cyber-select__group {
+.cyber-select_group {
   position: relative;
 }
 
-.cyber-select__submenu {
+.cyber-select_submenu {
   display: none;
   position: absolute;
   top: 0;
@@ -1098,12 +1098,12 @@ td.highlight {
   color: #0ff;
 }
 
-.cyber-select__submenu-toggle:hover+.cyber-select__submenu,
-.cyber-select__submenu:hover {
+.cyber-select_submenu-toggle:hover+.cyber-select_submenu,
+.cyber-select_submenu:hover {
   display: block;
 }
 
-.cyber-flag {
+.cyber-flag, .cyber-flag-mins {
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -1120,11 +1120,11 @@ td.highlight {
   user-select: none;
 }
 
-.cyber-flag__input {
+.cyber-flag_input, .cyber-flag-mins_input {
   display: none;
 }
 
-.cyber-flag__box {
+.cyber-flag_box {
   width: 22px;
   height: 22px;
   border: 2px solid #f0f;
@@ -1139,13 +1139,13 @@ td.highlight {
   position: relative;
 }
 
-.cyber-flag__input:checked+.cyber-flag__box {
+.cyber-flag_input:checked+.cyber-flag_box, .cyber-flag-mins_input:checked+.cyber-flag_box {
   background: linear-gradient(90deg, #0ff 0%, #f0f 100%);
   border-color: #0ff;
   box-shadow: 0 0 16px #0ffb, 0 0 4px #f0f;
 }
 
-.cyber-flag__input:checked+.cyber-flag__box::after {
+.cyber-flag_input:checked+.cyber-flag_box::after, .cyber-flag-mins_input:checked+.cyber-flag_box::after {
   content: '';
   display: block;
   width: 12px;
@@ -1156,7 +1156,7 @@ td.highlight {
   box-shadow: 0 0 4px #f0f;
 }
 
-.cyber-flag__label {
+.cyber-flag_label {
   font-size: 1.1em;
   letter-spacing: 1px;
   color: #0ff;

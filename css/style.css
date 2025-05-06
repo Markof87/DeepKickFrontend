@@ -1103,7 +1103,7 @@ td.highlight {
   display: block;
 }
 
-.cyber-flag, .cyber-flag-mins {
+.cyber-flag {
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -1120,7 +1120,7 @@ td.highlight {
   user-select: none;
 }
 
-.cyber-flag_input, .cyber-flag-mins_input {
+.cyber-flag_input{
   display: none;
 }
 
@@ -1139,13 +1139,13 @@ td.highlight {
   position: relative;
 }
 
-.cyber-flag_input:checked+.cyber-flag_box, .cyber-flag-mins_input:checked+.cyber-flag_box {
+.cyber-flag_input:checked+.cyber-flag_box {
   background: linear-gradient(90deg, #0ff 0%, #f0f 100%);
   border-color: #0ff;
   box-shadow: 0 0 16px #0ffb, 0 0 4px #f0f;
 }
 
-.cyber-flag_input:checked+.cyber-flag_box::after, .cyber-flag-mins_input:checked+.cyber-flag_box::after {
+.cyber-flag_input:checked+.cyber-flag_box::after {
   content: '';
   display: block;
   width: 12px;

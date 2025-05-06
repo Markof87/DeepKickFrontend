@@ -335,7 +335,7 @@ function renderTable(data) {
 
     generateTable(tableData, columns);
 
-    const cyberFlagMinsInput = document.querySelector('.cyber-flag-mins_input');
+    const cyberFlagMinsInput = document.querySelector('#cyber-flag-mins_input');
     cyberFlagMinsInput.addEventListener('change', function () {
         const table = document.querySelector('.cyber-table');
         if (!table) return;
@@ -347,12 +347,9 @@ function renderTable(data) {
             targetIdx = headers.findIndex(th => th.textContent.trim().toLowerCase() === 'playing time.min');
             colName = 'Playing Time.Min';
         }
-        console.log('cyberFlagMinsInput', this.checked);
 
         if (targetIdx === -1) return; 
         
-        console.log(colName, targetIdx);
-
         const rows = table.querySelectorAll('tbody tr');
         rows.forEach(row => {
             const cells = row.querySelectorAll('td');
@@ -367,6 +364,28 @@ function renderTable(data) {
                 if (!isNaN(value) && value < 900) {
                     row.style.display = cyberFlagMinsInput.checked ? 'none' : 'table-row';
                 }
+            }
+        });
+
+    });
+
+    const cyberFlagAgeInput = document.querySelector('#cyber-flag-age_input');
+    cyberFlagAgeInput.addEventListener('change', function () {
+        const table = document.querySelector('.cyber-table');
+        if (!table) return;
+
+        const headers = Array.from(table.querySelectorAll('thead th'));
+        const targetIdx = headers.findIndex(th => th.textContent.trim().toLowerCase() === 'age');
+
+        const rows = table.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (!cells[targetIdx]) return;
+            const value = cells[targetIdx].textContent.trim();
+            const age = parseInt(value.split('-')[0], 10); 
+            console.log(age);
+            if (age > 23) {
+                row.style.display = cyberFlagAgeInput.checked ? 'none' : 'table-row';
             }
         });
 

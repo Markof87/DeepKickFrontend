@@ -78,20 +78,50 @@
             </div>
           </div>
         </div>
+        <label class="cyber-flag" id="cyber-flag-90mins">
+          <input type="checkbox" class="cyber-flag_input" id="cyber-flag-90mins_input" />
+          <span class="cyber-flag_box"></span>
+          <span class="cyber-flag_label">P90</span>
+        </label>
         <label class="cyber-flag" id="cyber-flag">
-          <input type="checkbox" class="cyber-flag_input" id="cyber-flag_input" />
+          <input type="checkbox" class="cyber-flag_input" id="cyber-flag-player_input" />
           <span class="cyber-flag_box"></span>
-          <span class="cyber-flag_label">Players</span>
+          <span class="cyber-flag_label">Giocatori</span>
         </label>
-        <label class="cyber-flag" id="cyber-flag-mins">
-          <input type="checkbox" class="cyber-flag_input" id="cyber-flag-mins_input" />
-          <span class="cyber-flag_box"></span>
-          <span class="cyber-flag_label">Minuti Giocati >900</span>
-        </label>
-        <label class="cyber-flag" id="cyber-flag-age">
-          <input type="checkbox" class="cyber-flag_input" id="cyber-flag-age_input" />
-          <span class="cyber-flag_box"></span>
-          <span class="cyber-flag_label">U23</span>
+        <label class="cyber-flag disabled" id="player_commands">
+          Giocatori
+          <label class="cyber-flag disabled" id="cyber-flag-mins">
+            <input type="checkbox" class="cyber-flag_input" id="cyber-flag-mins_input" disabled />
+            <span class="cyber-flag_box"></span>
+            <span class="cyber-flag_label">Minuti Giocati >900</span>
+          </label>
+          <label class="cyber-flag disabled" id="cyber-flag-age">
+            <input type="checkbox" class="cyber-flag_input" id="cyber-flag-age_input" disabled />
+            <span class="cyber-flag_box"></span>
+            <span class="cyber-flag_label">U23</span>
+          </label>
+          <label class="cyber-flag disabled" id="cyber-flag-roles">
+            <label for="cyber-flag-por_input">
+              <input type="checkbox" class="cyber-flag_input" id="cyber-flag-por_input" value="GK" checked disabled />
+              <span class="cyber-flag_box"></span>
+              <span class="cyber-flag_label">POR</span>
+            </label>
+            <label for="cyber-flag-dif_input">
+              <input type="checkbox" class="cyber-flag_input" id="cyber-flag-dif_input" value="DF" checked disabled />
+              <span class="cyber-flag_box"></span>
+              <span class="cyber-flag_label">DIF</span>
+            </label>
+            <label for="cyber-flag-cen_input">
+              <input type="checkbox" class="cyber-flag_input" id="cyber-flag-cen_input" value="MF" checked disabled />
+              <span class="cyber-flag_box"></span>
+              <span class="cyber-flag_label">CEN</span>
+            </label>
+            <label for="cyber-flag-att_input">
+              <input type="checkbox" class="cyber-flag_input" id="cyber-flag-att_input" value="FW" checked disabled />
+              <span class="cyber-flag_box"></span>
+              <span class="cyber-flag_label">ATT</span>
+            </label>
+          </label>
         </label>
       </div>
       <div id="table-container">
@@ -119,13 +149,23 @@
       let altriLoaded = false;
       let isPlayerChecked = false;
 
-      const cyberFlagInput = document.querySelector('.cyber-flag_input');
+      const cyberFlagInput = document.querySelector('#cyber-flag-player_input');
       cyberFlagInput.addEventListener('change', function () {
         isPlayerChecked = cyberFlagInput.checked;
 
         const selectedValue = selects[0].querySelector('.cyber-select_selected').dataset.value;
         const selectedStats = selects[1].querySelector('.cyber-select_selected').dataset.stats;
 
+        const playerCommands = document.querySelector('#player_commands');
+        const inputs = playerCommands.querySelectorAll('input');
+        inputs.forEach(input => {
+          input.disabled = !input.disabled;
+        });
+        const cyberFlags = playerCommands.querySelectorAll('.cyber-flag');
+        playerCommands.classList.toggle('disabled');
+        cyberFlags.forEach(flag => {
+          flag.classList.toggle('disabled');
+        });
         loadStatsByTournamentSeason(selectedValue == undefined ? "ITA" : selectedValue, "2425", selectedStats == undefined ? "standard" : selectedStats, isPlayerChecked);
       });
 

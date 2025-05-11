@@ -383,12 +383,90 @@ function renderTable(data) {
             if (!cells[targetIdx]) return;
             const value = cells[targetIdx].textContent.trim();
             const age = parseInt(value.split('-')[0], 10); 
-            console.log(age);
             if (age > 23) {
                 row.style.display = cyberFlagAgeInput.checked ? 'none' : 'table-row';
             }
         });
 
+    });
+
+    const cyberFlagRoles = document.querySelector('#cyber-flag-roles');
+    cyberFlagRoles.querySelectorAll('input[type="checkbox"]').forEach(input => {
+        input.addEventListener('change', function () {
+            const table = document.querySelector('.cyber-table');
+            if (!table) return;
+
+            const headers = Array.from(table.querySelectorAll('thead th'));
+            const targetIdx = headers.findIndex(th => th.textContent.trim().toLowerCase() === 'pos');
+
+            if (targetIdx === -1) return;
+
+            const pos = this.value;
+
+            const rows = table.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (!cells[targetIdx]) return;
+                const value = cells[targetIdx].textContent.trim();
+                if (value.includes(pos)) {
+                    row.style.display = this.checked ? 'table-row' : 'none';
+                }
+            });
+        });
+    });
+
+    cyberFlagAgeInput.addEventListener('change', function () {
+        const table = document.querySelector('.cyber-table');
+        if (!table) return;
+
+        const headers = Array.from(table.querySelectorAll('thead th'));
+        const targetIdx = headers.findIndex(th => th.textContent.trim().toLowerCase() === 'age');
+
+        const rows = table.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (!cells[targetIdx]) return;
+            const value = cells[targetIdx].textContent.trim();
+            const age = parseInt(value.split('-')[0], 10); 
+            if (age > 23) {
+                row.style.display = cyberFlagAgeInput.checked ? 'none' : 'table-row';
+            }
+        });
+
+    });
+
+    const cyberFlagPerNinetyInput = document.querySelector('#cyber-flag-90mins_input');
+    cyberFlagPerNinetyInput.addEventListener('change', function () {
+        const table = document.querySelector('.cyber-table');
+        if (!table) return;
+
+        const headerRow = document.querySelector('.cyber-table thead tr');
+        if (!headerRow) return;
+
+        const rows = table.querySelectorAll('tbody tr');
+        const headerCells = headerRow.querySelectorAll('th');
+        const indexNinety = Array.from(headerCells).findIndex(headerCell => headerCell.textContent.trim().toLowerCase() === '90s' || headerCell.textContent.trim().toLowerCase() === 'playing time.90s');
+        if (indexNinety === -1) return;
+
+
+        headerCells.forEach((headerCell, index) => {
+            //devo dividere tutte le celle che hanno numeri per il numero che trovo in corrispondenza dell'header 90s o playing time.90s
+            if (headerCell.textContent.trim().toLowerCase() === 'expected.npxg') {
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    const ninetyCell = cells[indexNinety];
+                    const ninetyValue = parseFloat(ninetyCell.textContent.replace(',', '.'));
+                    const cell = cells[index];
+                    if (cell) {
+                        const originalValue = parseFloat(cell.textContent.replace(',', '.'));
+                        if (cyberFlagPerNinetyInput.checked)
+                            cell.textContent = (originalValue / ninetyValue).toFixed(2);
+                        else
+                            cell.textContent = (originalValue * ninetyValue).toFixed(1);
+                    }
+                });
+            }
+        });
     });
 
 }
